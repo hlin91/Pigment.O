@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#type: ignore
 
 #\\ Import Modules #############################################################
 # Python Modules
@@ -56,6 +57,12 @@ from .pigment_o_modulo import (
     Dialog_CR,
     )
 from .pigment_o_extension import PigmentO_Extension
+
+def QColorFromFloat(r: float, g: float, b: float, a: float = 255) -> QColor:
+    return QColor(math.floor(r), math.floor(g), math.floor(b), a)
+
+def QPointFromFloat(xpos: float, ypos: float) -> QPoint:
+    return QPoint(math.floor(xpos), math.floor(ypos))
 
 #//
 #\\ Global Variables ###########################################################
@@ -15129,8 +15136,8 @@ class PigmentO_Docker(DockWidget):
                 panel_hue_regular_mask_height = self.layout.panel_hue_regular_mask.height()
                 region_polygon = QPolygon([
                     QPoint(0, 0),
-                    QPoint(0, panel_hue_regular_mask_height),
-                    QPoint(panel_hue_regular_mask_width, panel_hue_regular_mask_height*0.5)
+                    QPointFromFloat(0, panel_hue_regular_mask_height),
+                    QPointFromFloat(panel_hue_regular_mask_width, panel_hue_regular_mask_height*0.5)
                     ])
                 self.layout.panel_hue_regular_mask.setMask(QRegion(region_polygon))
             if self.panel_secondary == "SQUARE":
@@ -15147,9 +15154,9 @@ class PigmentO_Docker(DockWidget):
                 panel_hue_regular_mask_height = self.layout.panel_hue_regular_mask.height()
                 region_polygon = QPolygon([
                     QPoint(0, 0),
-                    QPoint(panel_hue_regular_mask_width, 0),
-                    QPoint(panel_hue_regular_mask_width, panel_hue_regular_mask_height),
-                    QPoint(0, panel_hue_regular_mask_height)
+                    QPointFromFloat(panel_hue_regular_mask_width, 0),
+                    QPointFromFloat(panel_hue_regular_mask_width, panel_hue_regular_mask_height),
+                    QPointFromFloat(0, panel_hue_regular_mask_height)
                     ])
                 self.layout.panel_hue_regular_mask.setMask(QRegion(region_polygon))
             if self.panel_secondary == "DIAMOND":
@@ -15165,10 +15172,10 @@ class PigmentO_Docker(DockWidget):
                 panel_hue_regular_mask_width = self.layout.panel_hue_regular_mask.width()
                 panel_hue_regular_mask_height = self.layout.panel_hue_regular_mask.height()
                 region_polygon = QPolygon([
-                    QPoint(panel_hue_regular_mask_width*0.5, 0),
-                    QPoint(panel_hue_regular_mask_width, panel_hue_regular_mask_height*0.5),
-                    QPoint(panel_hue_regular_mask_width*0.5, panel_hue_regular_mask_height),
-                    QPoint(0, panel_hue_regular_mask_height*0.5)
+                    QPointFromFloat(panel_hue_regular_mask_width*0.5, 0),
+                    QPointFromFloat(panel_hue_regular_mask_width, panel_hue_regular_mask_height*0.5),
+                    QPointFromFloat(panel_hue_regular_mask_width*0.5, panel_hue_regular_mask_height),
+                    QPointFromFloat(0, panel_hue_regular_mask_height*0.5)
                     ])
                 self.layout.panel_hue_regular_mask.setMask(QRegion(region_polygon))
         if self.panel_active == "GAM":
@@ -19602,7 +19609,7 @@ class PigmentO_Docker(DockWidget):
     #//
     #\\ History ################################################################
     def History_List(self, value1, value2, value3):
-        color = QColor(value1*k_RGB, value2*k_RGB, value3*k_RGB)
+        color = QColorFromFloat(value1*k_RGB, value2*k_RGB, value3*k_RGB)
         pixmap = QPixmap(15,30)
         pixmap.fill(color)
         item = QListWidgetItem()

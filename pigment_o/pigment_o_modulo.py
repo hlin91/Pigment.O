@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#pyright: ignore
 
 # Import Modules
 from krita import *
@@ -23,6 +24,11 @@ import math
 import time
 import subprocess
 
+def QColorFromFloat(r: float, g: float, b: float, a: float = 255) -> QColor:
+    return QColor(math.floor(r), math.floor(g), math.floor(b), a)
+
+def QPointFromFloat(xpos: float, ypos: float) -> QPoint:
+    return QPoint(math.floor(xpos), math.floor(ypos))
 
 class Color_Header(QWidget):
     SIGNAL_COLOR_LUMALOCK = QtCore.pyqtSignal(int)
@@ -132,10 +138,10 @@ class Harmony_Color(QWidget):
         # Polygon
         if self.active == True:
             square = QPolygon([
-                QPoint(self.width*0.3, self.height*0.75),
-                QPoint(self.width*0.7, self.height*0.75),
-                QPoint(self.width*0.7, self.height*1.0),
-                QPoint(self.width*0.3, self.height*1.0)
+                QPointFromFloat(self.width*0.3, self.height*0.75),
+                QPointFromFloat(self.width*0.7, self.height*0.75),
+                QPointFromFloat(self.width*0.7, self.height*1.0),
+                QPointFromFloat(self.width*0.3, self.height*1.0)
                 ])
             painter.drawPolygon(square)
 class Harmony_Span(QWidget):
@@ -253,11 +259,11 @@ class Panel_SWA(QWidget):
     # Relay
     def Update_Panel(self, cor1, cor2, cor3, cor4, cor5, hex1, hex2, hex3, hex4, hex5, widget_width, widget_height):
         # QColor
-        self.cor1 = QColor(cor1[0]*255, cor1[1]*255, cor1[2]*255)
-        self.cor2 = QColor(cor2[0]*255, cor2[1]*255, cor2[2]*255)
-        self.cor3 = QColor(cor3[0]*255, cor3[1]*255, cor3[2]*255)
-        self.cor4 = QColor(cor4[0]*255, cor4[1]*255, cor4[2]*255)
-        self.cor5 = QColor(cor5[0]*255, cor5[1]*255, cor5[2]*255)
+        self.cor1 = QColorFromFloat(cor1[0]*255, cor1[1]*255, cor1[2]*255)
+        self.cor2 = QColorFromFloat(cor2[0]*255, cor2[1]*255, cor2[2]*255)
+        self.cor3 = QColorFromFloat(cor3[0]*255, cor3[1]*255, cor3[2]*255)
+        self.cor4 = QColorFromFloat(cor4[0]*255, cor4[1]*255, cor4[2]*255)
+        self.cor5 = QColorFromFloat(cor5[0]*255, cor5[1]*255, cor5[2]*255)
         # Hex
         self.hex1 = hex1
         self.hex2 = hex2
@@ -355,7 +361,7 @@ class Panel_UVD(QWidget):
         self.cursor_rmb.load(self.array_rmb)
         # Style SVG Cursors
         self.cursor_size = 20
-        self.cursor_half = self.cursor_size / 2
+        self.cursor_half = self.cursor_size // 2
         self.cursor_lmb.setGeometry(QtCore.QRect(-self.cursor_half, -self.cursor_half, self.cursor_size, self.cursor_size))
         self.cursor_rmb.setGeometry(QtCore.QRect(-self.cursor_half, -self.cursor_half, self.cursor_size, self.cursor_size))
         self.cursor_rmb.resize(0, 0)
@@ -397,11 +403,11 @@ class Panel_UVD(QWidget):
         self.P61 = p61
         # Move Cursor
         try:
-            self.cursor_lmb.move(self.value_x-(self.cursor_lmb.width()/2), self.value_y-(self.cursor_lmb.height()/2))
-            self.cursor_rmb.move(self.value_x-(self.cursor_rmb.width()/2), self.value_y-(self.cursor_rmb.height()/2))
+            self.cursor_lmb.move(math.floor(self.value_x-(self.cursor_lmb.width()/2)), math.floor(self.value_y-(self.cursor_lmb.height()/2)))
+            self.cursor_rmb.move(math.floor(self.value_x-(self.cursor_rmb.width()/2)), math.floor(self.value_y-(self.cursor_rmb.height()/2)))
         except:
-            self.cursor_lmb.move(self.panel_width / 2, self.panel_height / 2)
-            self.cursor_rmb.move(self.panel_width / 2, self.panel_height / 2)
+            self.cursor_lmb.move(self.panel_width // 2, self.panel_height // 2)
+            self.cursor_rmb.move(self.panel_width // 2, self.panel_height // 2)
         # Zoom
         self.cursorzoom(zoom)
 
@@ -509,8 +515,8 @@ class Panel_UVD(QWidget):
         # Correct Cursor
         if (event.buttons() == QtCore.Qt.LeftButton or event.buttons() == QtCore.Qt.MiddleButton):
             # Move Cursor
-            self.cursor_lmb.move(self.value_x-(self.cursor_lmb.width()/2), self.value_y-(self.cursor_lmb.height()/2))
-            self.cursor_rmb.move(self.value_x-(self.cursor_rmb.width()/2), self.value_y-(self.cursor_rmb.height()/2))
+            self.cursor_lmb.move(math.floor(self.value_x-(self.cursor_lmb.width()/2)), math.floor(self.value_y-(self.cursor_lmb.height()/2)))
+            self.cursor_rmb.move(math.floor(self.value_x-(self.cursor_rmb.width()/2)), math.floor(self.value_y-(self.cursor_rmb.height()/2)))
             # Change Color
             self.array_rmb = self.style.SVG_Cursor_RMB(self.hex)
             self.cursor_rmb.load(self.array_rmb)
@@ -529,8 +535,8 @@ class Panel_UVD(QWidget):
             # Scale Cursor for Display
             self.cursor_rmb.resize(self.scale_factor, self.scale_factor) # 60 = max tilt value
             # Move Cursor
-            self.cursor_lmb.move(self.value_x-(self.cursor_lmb.width()/2), self.value_y-(self.cursor_lmb.height()/2))
-            self.cursor_rmb.move(self.value_x-(self.cursor_rmb.width()/2), self.value_y-(self.cursor_rmb.height()/2))
+            self.cursor_lmb.move(math.floor(self.value_x-(self.cursor_lmb.width()/2)), math.floor(self.value_y-(self.cursor_lmb.height()/2)))
+            self.cursor_rmb.move(math.floor(self.value_x-(self.cursor_rmb.width()/2)), math.floor(self.value_y-(self.cursor_rmb.height()/2)))
             # Change Color
             self.array_rmb = self.style.SVG_Cursor_RMB(self.hex)
             self.cursor_rmb.load(self.array_rmb)
@@ -584,15 +590,15 @@ class Panel_UVD(QWidget):
             var = self.diagonal * 255
             # RED
             gradient_red = QLinearGradient(self.P45[0],self.P45[1], self.P12[0],self.P12[1])
-            gradient_red.setColorAt(0.0, QColor(var,0,0,255))
+            gradient_red.setColorAt(0.0, QColorFromFloat(var,0,0,255))
             gradient_red.setColorAt(1.0, QColor(0,0,0,255))
             # GREEN
             gradient_green = QLinearGradient(self.P23[0],self.P23[1], self.P56[0],self.P56[1])
-            gradient_green.setColorAt(0.0, QColor(0,var,0,255))
+            gradient_green.setColorAt(0.0, QColorFromFloat(0,var,0,255))
             gradient_green.setColorAt(1.0, QColor(0,0,0,255))
             # BLUE
             gradient_blue = QLinearGradient(self.P61[0],self.P61[1], self.P34[0],self.P34[1])
-            gradient_blue.setColorAt(0.0, QColor(0,0,var,255))
+            gradient_blue.setColorAt(0.0, QColorFromFloat(0,0,var,255))
             gradient_blue.setColorAt(1.0, QColor(0,0,0,255))
         if (self.diagonal >= 1 and self.diagonal <= 2):
             # RED
@@ -612,15 +618,15 @@ class Panel_UVD(QWidget):
             # RED
             gradient_red = QLinearGradient(self.P45[0],self.P45[1], self.P12[0],self.P12[1])
             gradient_red.setColorAt(0.0, QColor(255,0,0,255))
-            gradient_red.setColorAt(1.0, QColor(var,0,0,255))
+            gradient_red.setColorAt(1.0, QColorFromFloat(var,0,0,255))
             # GREEN
             gradient_green = QLinearGradient(self.P23[0],self.P23[1], self.P56[0],self.P56[1])
             gradient_green.setColorAt(0.0, QColor(0,255,0,255))
-            gradient_green.setColorAt(1.0, QColor(0,var,0,255))
+            gradient_green.setColorAt(1.0, QColorFromFloat(0,var,0,255))
             # BLUE
             gradient_blue = QLinearGradient(self.P61[0],self.P61[1], self.P34[0],self.P34[1])
             gradient_blue.setColorAt(0.0, QColor(0,0,255,255))
-            gradient_blue.setColorAt(1.0, QColor(0,0,var,255))
+            gradient_blue.setColorAt(1.0, QColorFromFloat(0,0,var,255))
         if self.diagonal >= 3:
             # RED
             gradient_red = QLinearGradient(self.P45[0],self.P45[1], self.P12[0],self.P12[1])
@@ -746,7 +752,7 @@ class Panel_YUV(QWidget):
         self.cursor_rmb.load(self.array_rmb)
         # Style SVG Cursors
         self.cursor_size = 20
-        self.cursor_half = self.cursor_size / 2
+        self.cursor_half = self.cursor_size // 2
         self.cursor_lmb.setGeometry(QtCore.QRect(-self.cursor_half, -self.cursor_half, self.cursor_size, self.cursor_size))
         self.cursor_rmb.setGeometry(QtCore.QRect(-self.cursor_half, -self.cursor_half, self.cursor_size, self.cursor_size))
         self.cursor_rmb.resize(0, 0)
@@ -773,8 +779,8 @@ class Panel_YUV(QWidget):
         self.value_x = self.yuv[1] * self.panel_width
         self.value_y = self.panel_height - (self.yuv[2] * self.panel_height)
         # Move Cursor
-        self.cursor_lmb.move(self.value_x-(self.cursor_lmb.width() / 2), self.value_y-(self.cursor_lmb.height() / 2))
-        self.cursor_rmb.move(self.value_x-(self.cursor_rmb.width() / 2), self.value_y-(self.cursor_rmb.height() / 2))
+        self.cursor_lmb.move(math.floor(self.value_x-(self.cursor_lmb.width() / 2)), math.floor(self.value_y-(self.cursor_lmb.height() / 2)))
+        self.cursor_rmb.move(math.floor(self.value_x-(self.cursor_rmb.width() / 2)), math.floor(self.value_y-(self.cursor_rmb.height() / 2)))
 
         # Update the variables
         self.panel_width = width
@@ -824,8 +830,8 @@ class Panel_YUV(QWidget):
         # Correct Cursor
         if (event.buttons() == QtCore.Qt.LeftButton or event.buttons() == QtCore.Qt.MiddleButton):
             # Move Cursor
-            self.cursor_lmb.move(self.value_x-(self.cursor_lmb.width() / 2), self.value_y-(self.cursor_lmb.height() / 2))
-            self.cursor_rmb.move(self.value_x-(self.cursor_rmb.width() / 2), self.value_y-(self.cursor_rmb.height() / 2))
+            self.cursor_lmb.move(math.floor(self.value_x-(self.cursor_lmb.width() / 2)), math.floor(self.value_y-(self.cursor_lmb.height() / 2)))
+            self.cursor_rmb.move(math.floor(self.value_x-(self.cursor_rmb.width() / 2)), math.floor(self.value_y-(self.cursor_rmb.height() / 2)))
             # Change Color
             self.array_rmb = self.style.SVG_Cursor_RMB(self.hex)
             self.cursor_rmb.load(self.array_rmb)
@@ -842,8 +848,8 @@ class Panel_YUV(QWidget):
             # Scale Cursor for Display
             self.cursor_rmb.resize(self.scale_factor, self.scale_factor) # 60 = max tilt value
             # Move Cursor
-            self.cursor_lmb.move(self.value_x-(self.cursor_lmb.width() / 2), self.value_y-(self.cursor_lmb.height() / 2))
-            self.cursor_rmb.move(self.value_x-(self.cursor_rmb.width() / 2), self.value_y-(self.cursor_rmb.height() / 2))
+            self.cursor_lmb.move(math.floor(self.value_x-(self.cursor_lmb.width() / 2)), math.floor(self.value_y-(self.cursor_lmb.height() / 2)))
+            self.cursor_rmb.move(math.floor(self.value_x-(self.cursor_rmb.width() / 2)), math.floor(self.value_y-(self.cursor_rmb.height() / 2)))
             # Change Color
             self.array_rmb = self.style.SVG_Cursor_RMB(self.hex)
             self.cursor_rmb.load(self.array_rmb)
@@ -976,7 +982,7 @@ class Panel_ARD(QWidget):
         self.cursor_rmb.load(self.array_rmb)
         # Style SVG Cursors
         self.cursor_size = 20
-        self.cursor_half = self.cursor_size / 2
+        self.cursor_half = self.cursor_size // 2
         self.cursor_lmb.setGeometry(QtCore.QRect(-self.cursor_half, -self.cursor_half, self.cursor_size, self.cursor_size))
         self.cursor_rmb.setGeometry(QtCore.QRect(-self.cursor_half, -self.cursor_half, self.cursor_size, self.cursor_size))
         self.cursor_rmb.resize(0, 0)
@@ -1006,8 +1012,8 @@ class Panel_ARD(QWidget):
         self.cross_y = cross[1]
         # Move Cursor
         try:
-            self.cursor_lmb.move(self.value_x-(self.cursor_lmb.width()/2), self.value_y-(self.cursor_lmb.height()/2))
-            self.cursor_rmb.move(self.value_x-(self.cursor_rmb.width()/2), self.value_y-(self.cursor_rmb.height()/2))
+            self.cursor_lmb.move(math.floor(self.value_x-(self.cursor_lmb.width()/2)), math.floor(self.value_y-(self.cursor_lmb.height()/2)))
+            self.cursor_rmb.move(math.floor(self.value_x-(self.cursor_rmb.width()/2)), math.floor(self.value_y-(self.cursor_rmb.height()/2)))
         except:
             self.cursor_lmb.move(0, self.panel_height)
             self.cursor_rmb.move(0, self.panel_height)
@@ -1076,8 +1082,8 @@ class Panel_ARD(QWidget):
         # Correct Cursor
         if (event.buttons() == QtCore.Qt.LeftButton or event.buttons() == QtCore.Qt.MiddleButton or event.type() == QtCore.QEvent.MouseButtonDblClick):
             # Move Cursor
-            self.cursor_lmb.move(self.value_x-(self.cursor_lmb.width()/2), self.value_y-(self.cursor_lmb.height()/2))
-            self.cursor_rmb.move(self.value_x-(self.cursor_rmb.width()/2), self.value_y-(self.cursor_rmb.height()/2))
+            self.cursor_lmb.move(math.floor(self.value_x-(self.cursor_lmb.width()/2)), math.floor(self.value_y-(self.cursor_lmb.height()/2)))
+            self.cursor_rmb.move(math.floor(self.value_x-(self.cursor_rmb.width()/2)), math.floor(self.value_y-(self.cursor_rmb.height()/2)))
             # Change Color
             self.array_rmb = self.style.SVG_Cursor_RMB(self.hex)
             self.cursor_rmb.load(self.array_rmb)
@@ -1097,8 +1103,8 @@ class Panel_ARD(QWidget):
             # Scale Cursor for Display
             self.cursor_rmb.resize(self.scale_factor, self.scale_factor) # 60 = max tilt value
             # Move Cursor
-            self.cursor_lmb.move(self.value_x-(self.cursor_lmb.width()/2), self.value_y-(self.cursor_lmb.height()/2))
-            self.cursor_rmb.move(self.value_x-(self.cursor_rmb.width()/2), self.value_y-(self.cursor_rmb.height()/2))
+            self.cursor_lmb.move(math.floor(self.value_x-(self.cursor_lmb.width()/2)), math.floor(self.value_y-(self.cursor_lmb.height()/2)))
+            self.cursor_rmb.move(math.floor(self.value_x-(self.cursor_rmb.width()/2)), math.floor(self.value_y-(self.cursor_rmb.height()/2)))
             # Change Color
             self.array_rmb = self.style.SVG_Cursor_RMB(self.hex)
             self.cursor_rmb.load(self.array_rmb)
@@ -1141,7 +1147,7 @@ class Panel_ARD(QWidget):
         # Gradient Color
         cor = QLinearGradient(0, 0, self.panel_width, 0)
         cor.setColorAt(0.000, QColor(255, 255, 255, 0)) # White
-        cor.setColorAt(1.000, QColor(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255, 255)) # Color
+        cor.setColorAt(1.000, QColorFromFloat(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255, 255)) # Color
         painter.setBrush(QBrush(cor))
         painter.drawRect(0,0, self.panel_width, self.panel_height)
 
@@ -1206,7 +1212,7 @@ class Panel_HSV_4(QWidget):
         self.cursor_rmb.load(self.array_rmb)
         # Style SVG Cursors
         self.cursor_size = 20
-        self.cursor_half = self.cursor_size / 2
+        self.cursor_half = self.cursor_size // 2
         self.cursor_lmb.setGeometry(QtCore.QRect(-self.cursor_half, -self.cursor_half, self.cursor_size, self.cursor_size))
         self.cursor_rmb.setGeometry(QtCore.QRect(-self.cursor_half, -self.cursor_half, self.cursor_size, self.cursor_size))
         self.cursor_rmb.resize(0, 0)
@@ -1225,8 +1231,8 @@ class Panel_HSV_4(QWidget):
         self.value_x = self.hsv[1] * self.panel_width
         self.value_y = self.panel_height - (self.hsv[2] * self.panel_height)
         # Move Cursor
-        self.cursor_lmb.move(self.value_x-(self.cursor_lmb.width() / 2), self.value_y-(self.cursor_lmb.height() / 2))
-        self.cursor_rmb.move(self.value_x-(self.cursor_rmb.width() / 2), self.value_y-(self.cursor_rmb.height() / 2))
+        self.cursor_lmb.move(math.floor(self.value_x-(self.cursor_lmb.width() / 2)), math.floor(self.value_y-(self.cursor_lmb.height() / 2)))
+        self.cursor_rmb.move(math.floor(self.value_x-(self.cursor_rmb.width() / 2)), math.floor(self.value_y-(self.cursor_rmb.height() / 2)))
         # Harmony
         self.harmony_render = harmony_render
         self.harmony_edit = harmony_edit
@@ -1293,8 +1299,8 @@ class Panel_HSV_4(QWidget):
         # Correct Cursor
         if (event.buttons() == QtCore.Qt.LeftButton or event.buttons() == QtCore.Qt.MiddleButton):
             # Move Cursor
-            self.cursor_lmb.move(self.value_x-(self.cursor_lmb.width() / 2), self.value_y-(self.cursor_lmb.height() / 2))
-            self.cursor_rmb.move(self.value_x-(self.cursor_rmb.width() / 2), self.value_y-(self.cursor_rmb.height() / 2))
+            self.cursor_lmb.move(math.floor(self.value_x-(self.cursor_lmb.width() / 2)), math.floor(self.value_y-(self.cursor_lmb.height() / 2)))
+            self.cursor_rmb.move(math.floor(self.value_x-(self.cursor_rmb.width() / 2)), math.floor(self.value_y-(self.cursor_rmb.height() / 2)))
             # Change Color
             self.array_rmb = self.style.SVG_Cursor_RMB(self.hex)
             self.cursor_rmb.load(self.array_rmb)
@@ -1311,8 +1317,8 @@ class Panel_HSV_4(QWidget):
             # Scale Cursor for Display
             self.cursor_rmb.resize(self.scale_factor, self.scale_factor) # 60 = max tilt value
             # Move Cursor
-            self.cursor_lmb.move(self.value_x-(self.cursor_lmb.width() / 2), self.value_y-(self.cursor_lmb.height() / 2))
-            self.cursor_rmb.move(self.value_x-(self.cursor_rmb.width() / 2), self.value_y-(self.cursor_rmb.height() / 2))
+            self.cursor_lmb.move(math.floor(self.value_x-(self.cursor_lmb.width() / 2)), math.floor(self.value_y-(self.cursor_lmb.height() / 2)))
+            self.cursor_rmb.move(math.floor(self.value_x-(self.cursor_rmb.width() / 2)), math.floor(self.value_y-(self.cursor_rmb.height() / 2)))
             # Change Color
             self.array_rmb = self.style.SVG_Cursor_RMB(self.hex)
             self.cursor_rmb.load(self.array_rmb)
@@ -1352,7 +1358,7 @@ class Panel_HSV_4(QWidget):
             # Gradient Color
             cor = QLinearGradient(0, 0, self.panel_width, 0)
             cor.setColorAt(0.000, QColor(255, 255, 255, 255)) # White
-            cor.setColorAt(1.000, QColor(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255, 255)) # Color
+            cor.setColorAt(1.000, QColorFromFloat(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255, 255)) # Color
             painter.setBrush(QBrush(cor))
             painter.drawRect(0,0, self.panel_width, self.panel_height)
             # Gradient BW
@@ -1370,7 +1376,7 @@ class Panel_HSV_4(QWidget):
             # Gradient Color
             cor = QLinearGradient(0, 0, self.panel_width, 0)
             cor.setColorAt(0.000, QColor(255, 255, 255, 255)) # White
-            cor.setColorAt(1.000, QColor(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255, 255)) # Color
+            cor.setColorAt(1.000, QColorFromFloat(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255, 255)) # Color
             painter.setBrush(QBrush(cor))
             painter.drawRect(0,0, self.panel_width, self.panel_height)
             # Gradient BW
@@ -1435,7 +1441,7 @@ class Panel_HSL_3(QWidget):
         self.cursor_rmb.load(self.array_rmb)
         # Style SVG Cursors
         self.cursor_size = 20
-        self.cursor_half = self.cursor_size / 2
+        self.cursor_half = self.cursor_size // 2
         self.cursor_lmb.setGeometry(QtCore.QRect(-self.cursor_half, -self.cursor_half, self.cursor_size, self.cursor_size))
         self.cursor_rmb.setGeometry(QtCore.QRect(-self.cursor_half, -self.cursor_half, self.cursor_size, self.cursor_size))
         self.cursor_rmb.resize(0, 0)
@@ -1457,8 +1463,8 @@ class Panel_HSL_3(QWidget):
         self.value_y = self.panel_height - (self.hsl[2] * self.panel_height)
         self.value_x = self.Panel_Triangle(self.hsl[1], self.value_y)
         # Move Cursor
-        self.cursor_lmb.move(self.value_x-(self.cursor_lmb.width() / 2), self.value_y-(self.cursor_lmb.height() / 2))
-        self.cursor_rmb.move(self.value_x-(self.cursor_rmb.width() / 2), self.value_y-(self.cursor_rmb.height() / 2))
+        self.cursor_lmb.move(math.floor(self.value_x-(self.cursor_lmb.width() / 2)), math.floor(self.value_y-(self.cursor_lmb.height() / 2)))
+        self.cursor_rmb.move(math.floor(self.value_x-(self.cursor_rmb.width() / 2)), math.floor(self.value_y-(self.cursor_rmb.height() / 2)))
         # Harmony
         self.harmony_render = harmony_render
         self.harmony_edit = harmony_edit
@@ -1569,8 +1575,8 @@ class Panel_HSL_3(QWidget):
         # Correct Cursor
         if (event.buttons() == QtCore.Qt.LeftButton or event.buttons() == QtCore.Qt.MiddleButton):
             # Move Cursor
-            self.cursor_lmb.move(self.value_x-(self.cursor_lmb.width() / 2), self.value_y-(self.cursor_lmb.height() / 2))
-            self.cursor_rmb.move(self.value_x-(self.cursor_rmb.width() / 2), self.value_y-(self.cursor_rmb.height() / 2))
+            self.cursor_lmb.move(math.floor(self.value_x-(self.cursor_lmb.width() / 2)), math.floor(self.value_y-(self.cursor_lmb.height() / 2)))
+            self.cursor_rmb.move(math.floor(self.value_x-(self.cursor_rmb.width() / 2)), math.floor(self.value_y-(self.cursor_rmb.height() / 2)))
             # Change Color
             self.array_rmb = self.style.SVG_Cursor_RMB(self.hex)
             self.cursor_rmb.load(self.array_rmb)
@@ -1587,8 +1593,8 @@ class Panel_HSL_3(QWidget):
             # Scale Cursor for Display
             self.cursor_rmb.resize(self.scale_factor, self.scale_factor) # 60 = max tilt value
             # Move Cursor
-            self.cursor_lmb.move(self.value_x-(self.cursor_lmb.width() / 2), self.value_y-(self.cursor_lmb.height() / 2))
-            self.cursor_rmb.move(self.value_x-(self.cursor_rmb.width() / 2), self.value_y-(self.cursor_rmb.height() / 2))
+            self.cursor_lmb.move(math.floor(self.value_x-(self.cursor_lmb.width() / 2)), math.floor(self.value_y-(self.cursor_lmb.height() / 2)))
+            self.cursor_rmb.move(math.floor(self.value_x-(self.cursor_rmb.width() / 2)), math.floor(self.value_y-(self.cursor_rmb.height() / 2)))
             # Change Color
             self.array_rmb = self.style.SVG_Cursor_RMB(self.hex)
             self.cursor_rmb.load(self.array_rmb)
@@ -1626,13 +1632,13 @@ class Panel_HSL_3(QWidget):
             cor1 = QConicalGradient (QPointF(0, 0), 0)
             cor1.setColorAt(0.000, QColor(127,127,127))
             cor1.setColorAt(0.750, QColor(127,127,127))
-            cor1.setColorAt(0.917, QColor(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255)) # Color
-            cor1.setColorAt(1.000, QColor(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255)) # Color
+            cor1.setColorAt(0.917, QColorFromFloat(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255)) # Color
+            cor1.setColorAt(1.000, QColorFromFloat(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255)) # Color
             painter.setBrush(QBrush(cor1))
             painter.drawRect(0,0, self.panel_width, self.panel_height*0.5)
             cor2 = QConicalGradient (QPointF(0, self.panel_height), 0)
-            cor2.setColorAt(0.000, QColor(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255)) # Color
-            cor2.setColorAt(0.082, QColor(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255)) # Color
+            cor2.setColorAt(0.000, QColorFromFloat(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255)) # Color
+            cor2.setColorAt(0.082, QColorFromFloat(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255)) # Color
             cor2.setColorAt(0.250, QColor(127,127,127))
             cor2.setColorAt(1.000, QColor(127,127,127))
             painter.setBrush(QBrush(cor2))
@@ -1659,13 +1665,13 @@ class Panel_HSL_3(QWidget):
             cor1 = QConicalGradient (QPointF(0, 0), 0)
             cor1.setColorAt(0.000, QColor(127,127,127))
             cor1.setColorAt(0.750, QColor(127,127,127))
-            cor1.setColorAt(0.917, QColor(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255)) # Color
-            cor1.setColorAt(1.000, QColor(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255)) # Color
+            cor1.setColorAt(0.917, QColorFromFloat(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255)) # Color
+            cor1.setColorAt(1.000, QColorFromFloat(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255)) # Color
             painter.setBrush(QBrush(cor1))
             painter.drawRect(0,0, self.panel_width, self.panel_height*0.5)
             cor2 = QConicalGradient (QPointF(0, self.panel_height), 0)
-            cor2.setColorAt(0.000, QColor(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255)) # Color
-            cor2.setColorAt(0.082, QColor(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255)) # Color
+            cor2.setColorAt(0.000, QColorFromFloat(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255)) # Color
+            cor2.setColorAt(0.082, QColorFromFloat(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255)) # Color
             cor2.setColorAt(0.250, QColor(127,127,127))
             cor2.setColorAt(1.000, QColor(127,127,127))
             painter.setBrush(QBrush(cor2))
@@ -1752,7 +1758,7 @@ class Panel_HSL_4(QWidget):
         self.cursor_rmb.load(self.array_rmb)
         # Style SVG Cursors
         self.cursor_size = 20
-        self.cursor_half = self.cursor_size / 2
+        self.cursor_half = self.cursor_size // 2
         self.cursor_lmb.setGeometry(QtCore.QRect(-self.cursor_half, -self.cursor_half, self.cursor_size, self.cursor_size))
         self.cursor_rmb.setGeometry(QtCore.QRect(-self.cursor_half, -self.cursor_half, self.cursor_size, self.cursor_size))
         self.cursor_rmb.resize(0, 0)
@@ -1771,8 +1777,8 @@ class Panel_HSL_4(QWidget):
         self.value_x = self.hsl[1] * self.panel_width
         self.value_y = self.panel_height - (self.hsl[2] * self.panel_height)
         # Move Cursor
-        self.cursor_lmb.move(self.value_x-(self.cursor_lmb.width() / 2), self.value_y-(self.cursor_lmb.height() / 2))
-        self.cursor_rmb.move(self.value_x-(self.cursor_rmb.width() / 2), self.value_y-(self.cursor_rmb.height() / 2))
+        self.cursor_lmb.move(math.floor(self.value_x-(self.cursor_lmb.width() / 2)), math.floor(self.value_y-(self.cursor_lmb.height() / 2)))
+        self.cursor_rmb.move(math.floor(self.value_x-(self.cursor_rmb.width() / 2)), math.floor(self.value_y-(self.cursor_rmb.height() / 2)))
         # Harmony
         self.harmony_render = harmony_render
         self.harmony_edit = harmony_edit
@@ -1839,8 +1845,8 @@ class Panel_HSL_4(QWidget):
         # Correct Cursor
         if (event.buttons() == QtCore.Qt.LeftButton or event.buttons() == QtCore.Qt.MiddleButton):
             # Move Cursor
-            self.cursor_lmb.move(self.value_x-(self.cursor_lmb.width() / 2), self.value_y-(self.cursor_lmb.height() / 2))
-            self.cursor_rmb.move(self.value_x-(self.cursor_rmb.width() / 2), self.value_y-(self.cursor_rmb.height() / 2))
+            self.cursor_lmb.move(math.floor(self.value_x-(self.cursor_lmb.width() / 2)), math.floor(self.value_y-(self.cursor_lmb.height() / 2)))
+            self.cursor_rmb.move(math.floor(self.value_x-(self.cursor_rmb.width() / 2)), math.floor(self.value_y-(self.cursor_rmb.height() / 2)))
             # Change Color
             self.array_rmb = self.style.SVG_Cursor_RMB(self.hex)
             self.cursor_rmb.load(self.array_rmb)
@@ -1857,8 +1863,8 @@ class Panel_HSL_4(QWidget):
             # Scale Cursor for Display
             self.cursor_rmb.resize(self.scale_factor, self.scale_factor) # 60 = max tilt value
             # Move Cursor
-            self.cursor_lmb.move(self.value_x-(self.cursor_lmb.width() / 2), self.value_y-(self.cursor_lmb.height() / 2))
-            self.cursor_rmb.move(self.value_x-(self.cursor_rmb.width() / 2), self.value_y-(self.cursor_rmb.height() / 2))
+            self.cursor_lmb.move(math.floor(self.value_x-(self.cursor_lmb.width() / 2)), math.floor(self.value_y-(self.cursor_lmb.height() / 2)))
+            self.cursor_rmb.move(math.floor(self.value_x-(self.cursor_rmb.width() / 2)), math.floor(self.value_y-(self.cursor_rmb.height() / 2)))
             # Change Color
             self.array_rmb = self.style.SVG_Cursor_RMB(self.hex)
             self.cursor_rmb.load(self.array_rmb)
@@ -1896,7 +1902,7 @@ class Panel_HSL_4(QWidget):
             painter.setCompositionMode(QPainter.CompositionMode_Overlay)
             cor = QLinearGradient(0, 0, self.panel_width, 0)
             cor.setColorAt(0.000, QColor(0, 0, 0, 0)) # White Invisiable
-            cor.setColorAt(1.000, QColor(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255, 255)) # Black
+            cor.setColorAt(1.000, QColorFromFloat(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255, 255)) # Black
             painter.setBrush(QBrush(cor))
             painter.drawRect(0,0, self.panel_width,self.panel_height)
         if self.harmony_render == "HARMONY":
@@ -1914,7 +1920,7 @@ class Panel_HSL_4(QWidget):
             painter.setCompositionMode(QPainter.CompositionMode_Overlay)
             cor = QLinearGradient(0, 0, self.panel_width, 0)
             cor.setColorAt(0.000, QColor(0, 0, 0, 0)) # White Invisiable
-            cor.setColorAt(1.000, QColor(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255, 255)) # Black
+            cor.setColorAt(1.000, QColorFromFloat(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255, 255)) # Black
             painter.setBrush(QBrush(cor))
             painter.drawRect(0,0, self.panel_width,self.panel_height)
             # Harmony Marks
@@ -1972,7 +1978,7 @@ class Panel_HSL_4D(QWidget):
         self.cursor_rmb.load(self.array_rmb)
         # Style SVG Cursors
         self.cursor_size = 20
-        self.cursor_half = self.cursor_size / 2
+        self.cursor_half = self.cursor_size // 2
         self.cursor_lmb.setGeometry(QtCore.QRect(-self.cursor_half, -self.cursor_half, self.cursor_size, self.cursor_size))
         self.cursor_rmb.setGeometry(QtCore.QRect(-self.cursor_half, -self.cursor_half, self.cursor_size, self.cursor_size))
         self.cursor_rmb.resize(0, 0)
@@ -1993,8 +1999,8 @@ class Panel_HSL_4D(QWidget):
         # Change value range to slider range
         self.value_x, self.value_y = self.Panel_Diamond(self.hsl[1], self.hsl[2])
         # Move Cursor
-        self.cursor_lmb.move(self.value_x-(self.cursor_lmb.width() / 2), self.value_y-(self.cursor_lmb.height() / 2))
-        self.cursor_rmb.move(self.value_x-(self.cursor_rmb.width() / 2), self.value_y-(self.cursor_rmb.height() / 2))
+        self.cursor_lmb.move(math.floor(self.value_x-(self.cursor_lmb.width() / 2)), math.floor(self.value_y-(self.cursor_lmb.height() / 2)))
+        self.cursor_rmb.move(math.floor(self.value_x-(self.cursor_rmb.width() / 2)), math.floor(self.value_y-(self.cursor_rmb.height() / 2)))
         # Harmony
         self.harmony_render = harmony_render
         self.harmony_edit = harmony_edit
@@ -2106,8 +2112,8 @@ class Panel_HSL_4D(QWidget):
         # Correct Cursor
         if (event.buttons() == QtCore.Qt.LeftButton or event.buttons() == QtCore.Qt.MiddleButton):
             # Move Cursor
-            self.cursor_lmb.move(self.value_x-(self.cursor_lmb.width() / 2), self.value_y-(self.cursor_lmb.height() / 2))
-            self.cursor_rmb.move(self.value_x-(self.cursor_rmb.width() / 2), self.value_y-(self.cursor_rmb.height() / 2))
+            self.cursor_lmb.move(math.floor(self.value_x-(self.cursor_lmb.width() / 2)), math.floor(self.value_y-(self.cursor_lmb.height() / 2)))
+            self.cursor_rmb.move(math.floor(self.value_x-(self.cursor_rmb.width() / 2)), math.floor(self.value_y-(self.cursor_rmb.height() / 2)))
             # Change Color
             self.array_rmb = self.style.SVG_Cursor_RMB(self.hex)
             self.cursor_rmb.load(self.array_rmb)
@@ -2120,8 +2126,8 @@ class Panel_HSL_4D(QWidget):
             # Scale Cursor for Display
             self.cursor_rmb.resize(self.scale_factor, self.scale_factor) # 60 = max tilt value
             # Move Cursor
-            self.cursor_lmb.move(self.value_x-(self.cursor_lmb.width() / 2), self.value_y-(self.cursor_lmb.height() / 2))
-            self.cursor_rmb.move(self.value_x-(self.cursor_rmb.width() / 2), self.value_y-(self.cursor_rmb.height() / 2))
+            self.cursor_lmb.move(math.floor(self.value_x-(self.cursor_lmb.width() / 2)), math.floor(self.value_y-(self.cursor_lmb.height() / 2)))
+            self.cursor_rmb.move(math.floor(self.value_x-(self.cursor_rmb.width() / 2)), math.floor(self.value_y-(self.cursor_rmb.height() / 2)))
             # Change Color
             self.array_rmb = self.style.SVG_Cursor_RMB(self.hex)
             self.cursor_rmb.load(self.array_rmb)
@@ -2159,14 +2165,14 @@ class Panel_HSL_4D(QWidget):
             # Gradient Color 1
             cor1 = QConicalGradient (QPointF(self.panel_width/2, 0), 225)
             cor1.setColorAt(0.000, QColor(127,127,127))
-            cor1.setColorAt(0.250, QColor(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255)) # Color
+            cor1.setColorAt(0.250, QColorFromFloat(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255)) # Color
             painter.setBrush(QBrush(cor1))
             painter.drawRect(0,0, self.panel_width, self.panel_height/2)
             # Gradient Color 2
             cor2 = QConicalGradient (QPointF(self.panel_width/2, self.panel_height), 45)
-            cor2.setColorAt(0.000, QColor(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255)) # Color
+            cor2.setColorAt(0.000, QColorFromFloat(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255)) # Color
             cor2.setColorAt(0.250, QColor(127,127,127))
-            cor2.setColorAt(1.000, QColor(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255)) # Color
+            cor2.setColorAt(1.000, QColorFromFloat(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255)) # Color
             painter.setBrush(QBrush(cor2))
             painter.drawRect(0,self.panel_height/2, self.panel_width, self.panel_height)
             # Gradient BW
@@ -2191,14 +2197,14 @@ class Panel_HSL_4D(QWidget):
             # Gradient Color 1
             cor1 = QConicalGradient (QPointF(self.panel_width/2, 0), 225)
             cor1.setColorAt(0.000, QColor(127,127,127))
-            cor1.setColorAt(0.250, QColor(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255)) # Color
+            cor1.setColorAt(0.250, QColorFromFloat(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255)) # Color
             painter.setBrush(QBrush(cor1))
             painter.drawRect(0,0, self.panel_width, self.panel_height/2)
             # Gradient Color 2
             cor2 = QConicalGradient (QPointF(self.panel_width/2, self.panel_height), 45)
-            cor2.setColorAt(0.000, QColor(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255)) # Color
+            cor2.setColorAt(0.000, QColorFromFloat(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255)) # Color
             cor2.setColorAt(0.250, QColor(127,127,127))
-            cor2.setColorAt(1.000, QColor(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255)) # Color
+            cor2.setColorAt(1.000, QColorFromFloat(self.hue[0]*255, self.hue[1]*255, self.hue[2]*255)) # Color
             painter.setBrush(QBrush(cor2))
             painter.drawRect(0,self.panel_height/2, self.panel_width, self.panel_height)
             # Gradient BW
@@ -2285,7 +2291,7 @@ class Panel_HCY_4(QWidget):
         self.cursor_rmb.load(self.array_rmb)
         # Style SVG Cursors
         self.cursor_size = 20
-        self.cursor_half = self.cursor_size / 2
+        self.cursor_half = self.cursor_size // 2
         self.cursor_lmb.setGeometry(QtCore.QRect(-self.cursor_half, -self.cursor_half, self.cursor_size, self.cursor_size))
         self.cursor_rmb.setGeometry(QtCore.QRect(-self.cursor_half, -self.cursor_half, self.cursor_size, self.cursor_size))
         self.cursor_rmb.resize(0, 0)
@@ -2333,8 +2339,8 @@ class Panel_HCY_4(QWidget):
         self.value_x = self.hcy[1] * self.panel_width
         self.value_y = self.panel_height - (self.hcy[2] * self.panel_height)
         # Move Cursor
-        self.cursor_lmb.move(self.value_x-(self.cursor_lmb.width() / 2), self.value_y-(self.cursor_lmb.height() / 2))
-        self.cursor_rmb.move(self.value_x-(self.cursor_rmb.width() / 2), self.value_y-(self.cursor_rmb.height() / 2))
+        self.cursor_lmb.move(math.floor(self.value_x-(self.cursor_lmb.width() / 2)), math.floor(self.value_y-(self.cursor_lmb.height() / 2)))
+        self.cursor_rmb.move(math.floor(self.value_x-(self.cursor_rmb.width() / 2)), math.floor(self.value_y-(self.cursor_rmb.height() / 2)))
         # # Harmony
         self.harmony_render = harmony_render
         self.harmony_edit = harmony_edit
@@ -2401,8 +2407,8 @@ class Panel_HCY_4(QWidget):
         # Correct Cursor
         if (event.buttons() == QtCore.Qt.LeftButton or event.buttons() == QtCore.Qt.MiddleButton):
             # Move Cursor
-            self.cursor_lmb.move(self.value_x-(self.cursor_lmb.width() / 2), self.value_y-(self.cursor_lmb.height() / 2))
-            self.cursor_rmb.move(self.value_x-(self.cursor_rmb.width() / 2), self.value_y-(self.cursor_rmb.height() / 2))
+            self.cursor_lmb.move(math.floor(self.value_x-(self.cursor_lmb.width() / 2)), math.floor(self.value_y-(self.cursor_lmb.height() / 2)))
+            self.cursor_rmb.move(math.floor(self.value_x-(self.cursor_rmb.width() / 2)), math.floor(self.value_y-(self.cursor_rmb.height() / 2)))
             # Change Color
             self.array_rmb = self.style.SVG_Cursor_RMB(self.hex)
             self.cursor_rmb.load(self.array_rmb)
@@ -2419,8 +2425,8 @@ class Panel_HCY_4(QWidget):
             # Scale Cursor for Display
             self.cursor_rmb.resize(self.scale_factor, self.scale_factor) # 60 = max tilt value
             # Move Cursor
-            self.cursor_lmb.move(self.value_x-(self.cursor_lmb.width() / 2), self.value_y-(self.cursor_lmb.height() / 2))
-            self.cursor_rmb.move(self.value_x-(self.cursor_rmb.width() / 2), self.value_y-(self.cursor_rmb.height() / 2))
+            self.cursor_lmb.move(math.floor(self.value_x-(self.cursor_lmb.width() / 2)), math.floor(self.value_y-(self.cursor_lmb.height() / 2)))
+            self.cursor_rmb.move(math.floor(self.value_x-(self.cursor_rmb.width() / 2)), math.floor(self.value_y-(self.cursor_rmb.height() / 2)))
             # Change Color
             self.array_rmb = self.style.SVG_Cursor_RMB(self.hex)
             self.cursor_rmb.load(self.array_rmb)
@@ -2479,17 +2485,17 @@ class Panel_HCY_4(QWidget):
 
             # Gradient Color (Source)
             cor = QLinearGradient(0, 0, 0, self.panel_height)
-            cor.setColorAt(0.000, QColor(self.cor_00[0]*255, self.cor_00[1]*255, self.cor_00[2]*255, 255))
-            cor.setColorAt(0.100, QColor(self.cor_01[0]*255, self.cor_01[1]*255, self.cor_01[2]*255, 255))
-            cor.setColorAt(0.200, QColor(self.cor_02[0]*255, self.cor_02[1]*255, self.cor_02[2]*255, 255))
-            cor.setColorAt(0.300, QColor(self.cor_03[0]*255, self.cor_03[1]*255, self.cor_03[2]*255, 255))
-            cor.setColorAt(0.400, QColor(self.cor_04[0]*255, self.cor_04[1]*255, self.cor_04[2]*255, 255))
-            cor.setColorAt(0.500, QColor(self.cor_05[0]*255, self.cor_05[1]*255, self.cor_05[2]*255, 255))
-            cor.setColorAt(0.600, QColor(self.cor_06[0]*255, self.cor_06[1]*255, self.cor_06[2]*255, 255))
-            cor.setColorAt(0.700, QColor(self.cor_07[0]*255, self.cor_07[1]*255, self.cor_07[2]*255, 255))
-            cor.setColorAt(0.800, QColor(self.cor_08[0]*255, self.cor_08[1]*255, self.cor_08[2]*255, 255))
-            cor.setColorAt(0.900, QColor(self.cor_09[0]*255, self.cor_09[1]*255, self.cor_09[2]*255, 255))
-            cor.setColorAt(1.000, QColor(self.cor_10[0]*255, self.cor_10[1]*255, self.cor_10[2]*255, 255))
+            cor.setColorAt(0.000, QColorFromFloat(self.cor_00[0]*255, self.cor_00[1]*255, self.cor_00[2]*255, 255))
+            cor.setColorAt(0.100, QColorFromFloat(self.cor_01[0]*255, self.cor_01[1]*255, self.cor_01[2]*255, 255))
+            cor.setColorAt(0.200, QColorFromFloat(self.cor_02[0]*255, self.cor_02[1]*255, self.cor_02[2]*255, 255))
+            cor.setColorAt(0.300, QColorFromFloat(self.cor_03[0]*255, self.cor_03[1]*255, self.cor_03[2]*255, 255))
+            cor.setColorAt(0.400, QColorFromFloat(self.cor_04[0]*255, self.cor_04[1]*255, self.cor_04[2]*255, 255))
+            cor.setColorAt(0.500, QColorFromFloat(self.cor_05[0]*255, self.cor_05[1]*255, self.cor_05[2]*255, 255))
+            cor.setColorAt(0.600, QColorFromFloat(self.cor_06[0]*255, self.cor_06[1]*255, self.cor_06[2]*255, 255))
+            cor.setColorAt(0.700, QColorFromFloat(self.cor_07[0]*255, self.cor_07[1]*255, self.cor_07[2]*255, 255))
+            cor.setColorAt(0.800, QColorFromFloat(self.cor_08[0]*255, self.cor_08[1]*255, self.cor_08[2]*255, 255))
+            cor.setColorAt(0.900, QColorFromFloat(self.cor_09[0]*255, self.cor_09[1]*255, self.cor_09[2]*255, 255))
+            cor.setColorAt(1.000, QColorFromFloat(self.cor_10[0]*255, self.cor_10[1]*255, self.cor_10[2]*255, 255))
             canvas1.setBrush(QBrush(cor))
             canvas1.drawRect(0,0, self.panel_width, self.panel_height)
             canvas1.end()
@@ -3012,24 +3018,24 @@ class Panel_HUE_Circle(QWidget):
             # Hue Gradient
             painter.setPen(QtCore.Qt.NoPen)
             if self.wheel == "CMY":
-                hue = QConicalGradient(QPoint(self.panel_width/2, self.panel_height/2), 180)
-                hue.setColorAt(0.000, QColor(self.red[0], self.red[1], self.red[2])) # RED
-                hue.setColorAt(0.166, QColor(self.mag[0], self.mag[1], self.mag[2])) # MAGENTA
-                hue.setColorAt(0.333, QColor(self.blu[0], self.blu[1], self.blu[2])) # BLUE
-                hue.setColorAt(0.500, QColor(self.cya[0], self.cya[1], self.cya[2])) # CYAN
-                hue.setColorAt(0.666, QColor(self.gre[0], self.gre[1], self.gre[2])) # GREEN
-                hue.setColorAt(0.833, QColor(self.yel[0], self.yel[1], self.yel[2])) # YELLOW
-                hue.setColorAt(1.000, QColor(self.red[0], self.red[1], self.red[2])) # RED
+                hue = QConicalGradient(QPointFromFloat(self.panel_width/2, self.panel_height/2), 180)
+                hue.setColorAt(0.000, QColorFromFloat(self.red[0], self.red[1], self.red[2])) # RED
+                hue.setColorAt(0.166, QColorFromFloat(self.mag[0], self.mag[1], self.mag[2])) # MAGENTA
+                hue.setColorAt(0.333, QColorFromFloat(self.blu[0], self.blu[1], self.blu[2])) # BLUE
+                hue.setColorAt(0.500, QColorFromFloat(self.cya[0], self.cya[1], self.cya[2])) # CYAN
+                hue.setColorAt(0.666, QColorFromFloat(self.gre[0], self.gre[1], self.gre[2])) # GREEN
+                hue.setColorAt(0.833, QColorFromFloat(self.yel[0], self.yel[1], self.yel[2])) # YELLOW
+                hue.setColorAt(1.000, QColorFromFloat(self.red[0], self.red[1], self.red[2])) # RED
             if self.wheel == "RYB":
-                hue = QConicalGradient(QPoint(self.panel_width/2, self.panel_height/2), 210)
-                hue.setColorAt(0.000, QColor(self.red[0], self.red[1], self.red[2])) # RED
-                hue.setColorAt(0.083, QColor(self.mag[0], self.mag[1], self.mag[2])) # MAGENTA
-                hue.setColorAt(0.236, QColor(self.blu[0], self.blu[1], self.blu[2])) # BLUE
-                hue.setColorAt(0.394, QColor(self.cya[0], self.cya[1], self.cya[2])) # CYAN
-                hue.setColorAt(0.541, QColor(self.gre[0], self.gre[1], self.gre[2])) # GREEN
-                hue.setColorAt(0.661, QColor(self.yel[0], self.yel[1], self.yel[2])) # YELLOW
-                hue.setColorAt(0.833, QColor(self.ora[0], self.ora[1], self.ora[2])) # ORANGE
-                hue.setColorAt(1.000, QColor(self.red[0], self.red[1], self.red[2])) # RED
+                hue = QConicalGradient(QPointFromFloat(self.panel_width/2, self.panel_height/2), 210)
+                hue.setColorAt(0.000, QColorFromFloat(self.red[0], self.red[1], self.red[2])) # RED
+                hue.setColorAt(0.083, QColorFromFloat(self.mag[0], self.mag[1], self.mag[2])) # MAGENTA
+                hue.setColorAt(0.236, QColorFromFloat(self.blu[0], self.blu[1], self.blu[2])) # BLUE
+                hue.setColorAt(0.394, QColorFromFloat(self.cya[0], self.cya[1], self.cya[2])) # CYAN
+                hue.setColorAt(0.541, QColorFromFloat(self.gre[0], self.gre[1], self.gre[2])) # GREEN
+                hue.setColorAt(0.661, QColorFromFloat(self.yel[0], self.yel[1], self.yel[2])) # YELLOW
+                hue.setColorAt(0.833, QColorFromFloat(self.ora[0], self.ora[1], self.ora[2])) # ORANGE
+                hue.setColorAt(1.000, QColorFromFloat(self.red[0], self.red[1], self.red[2])) # RED
             painter.setBrush(QBrush(hue))
             outline01 = outline0.subtracted(outline1)
             painter.setClipPath(outline01)
@@ -3086,18 +3092,18 @@ class Panel_HUE_Circle(QWidget):
             if self.harmony_rule == "Split Complemantary":
                 # Triangle
                 polygon = QPolygon([
-                    QPoint(self.h1p_circle_x, self.h1p_circle_y),
-                    QPoint(self.h3p_circle_x, self.h3p_circle_y),
-                    QPoint(self.h5p_circle_x, self.h5p_circle_y)
+                    QPointFromFloat(self.h1p_circle_x, self.h1p_circle_y),
+                    QPointFromFloat(self.h3p_circle_x, self.h3p_circle_y),
+                    QPointFromFloat(self.h5p_circle_x, self.h5p_circle_y)
                     ])
                 painter.drawPolygon(polygon)
             if self.harmony_rule == "Double Split Complemantary":
                 # Square
                 polygon = QPolygon([
-                    QPoint(self.h1p_circle_x, self.h1p_circle_y),
-                    QPoint(self.h2p_circle_x, self.h2p_circle_y),
-                    QPoint(self.h4p_circle_x, self.h4p_circle_y),
-                    QPoint(self.h5p_circle_x, self.h5p_circle_y)
+                    QPointFromFloat(self.h1p_circle_x, self.h1p_circle_y),
+                    QPointFromFloat(self.h2p_circle_x, self.h2p_circle_y),
+                    QPointFromFloat(self.h4p_circle_x, self.h4p_circle_y),
+                    QPointFromFloat(self.h5p_circle_x, self.h5p_circle_y)
                     ])
                 painter.drawPolygon(polygon)
             # Dark Border
@@ -3127,24 +3133,24 @@ class Panel_HUE_Circle(QWidget):
             # Hue Gradient
             painter.setPen(QtCore.Qt.NoPen)
             if self.wheel == "CMY":
-                hue = QConicalGradient(QPoint(self.panel_width/2, self.panel_height/2), 180)
-                hue.setColorAt(0.000, QColor(self.red[0], self.red[1], self.red[2])) # RED
-                hue.setColorAt(0.166, QColor(self.mag[0], self.mag[1], self.mag[2])) # MAGENTA
-                hue.setColorAt(0.333, QColor(self.blu[0], self.blu[1], self.blu[2])) # BLUE
-                hue.setColorAt(0.500, QColor(self.cya[0], self.cya[1], self.cya[2])) # CYAN
-                hue.setColorAt(0.666, QColor(self.gre[0], self.gre[1], self.gre[2])) # GREEN
-                hue.setColorAt(0.833, QColor(self.yel[0], self.yel[1], self.yel[2])) # YELLOW
-                hue.setColorAt(1.000, QColor(self.red[0], self.red[1], self.red[2])) # RED
+                hue = QConicalGradient(QPointFromFloat(self.panel_width/2, self.panel_height/2), 180)
+                hue.setColorAt(0.000, QColorFromFloat(self.red[0], self.red[1], self.red[2])) # RED
+                hue.setColorAt(0.166, QColorFromFloat(self.mag[0], self.mag[1], self.mag[2])) # MAGENTA
+                hue.setColorAt(0.333, QColorFromFloat(self.blu[0], self.blu[1], self.blu[2])) # BLUE
+                hue.setColorAt(0.500, QColorFromFloat(self.cya[0], self.cya[1], self.cya[2])) # CYAN
+                hue.setColorAt(0.666, QColorFromFloat(self.gre[0], self.gre[1], self.gre[2])) # GREEN
+                hue.setColorAt(0.833, QColorFromFloat(self.yel[0], self.yel[1], self.yel[2])) # YELLOW
+                hue.setColorAt(1.000, QColorFromFloat(self.red[0], self.red[1], self.red[2])) # RED
             if self.wheel == "RYB":
-                hue = QConicalGradient(QPoint(self.panel_width/2, self.panel_height/2), 210)
-                hue.setColorAt(0.000, QColor(self.red[0], self.red[1], self.red[2])) # RED
-                hue.setColorAt(0.083, QColor(self.mag[0], self.mag[1], self.mag[2])) # MAGENTA
-                hue.setColorAt(0.236, QColor(self.blu[0], self.blu[1], self.blu[2])) # BLUE
-                hue.setColorAt(0.394, QColor(self.cya[0], self.cya[1], self.cya[2])) # CYAN
-                hue.setColorAt(0.541, QColor(self.gre[0], self.gre[1], self.gre[2])) # GREEN
-                hue.setColorAt(0.661, QColor(self.yel[0], self.yel[1], self.yel[2])) # YELLOW
-                hue.setColorAt(0.833, QColor(self.ora[0], self.ora[1], self.ora[2])) # ORANGE
-                hue.setColorAt(1.000, QColor(self.red[0], self.red[1], self.red[2])) # RED
+                hue = QConicalGradient(QPointFromFloat(self.panel_width/2, self.panel_height/2), 210)
+                hue.setColorAt(0.000, QColorFromFloat(self.red[0], self.red[1], self.red[2])) # RED
+                hue.setColorAt(0.083, QColorFromFloat(self.mag[0], self.mag[1], self.mag[2])) # MAGENTA
+                hue.setColorAt(0.236, QColorFromFloat(self.blu[0], self.blu[1], self.blu[2])) # BLUE
+                hue.setColorAt(0.394, QColorFromFloat(self.cya[0], self.cya[1], self.cya[2])) # CYAN
+                hue.setColorAt(0.541, QColorFromFloat(self.gre[0], self.gre[1], self.gre[2])) # GREEN
+                hue.setColorAt(0.661, QColorFromFloat(self.yel[0], self.yel[1], self.yel[2])) # YELLOW
+                hue.setColorAt(0.833, QColorFromFloat(self.ora[0], self.ora[1], self.ora[2])) # ORANGE
+                hue.setColorAt(1.000, QColorFromFloat(self.red[0], self.red[1], self.red[2])) # RED
             painter.setBrush(QBrush(hue))
             outline01 = outline0.subtracted(outline1)
             painter.setClipPath(outline01)
@@ -3183,15 +3189,15 @@ class Panel_HUE_Circle(QWidget):
             cs5 = QPainterPath()
             cs5.moveTo(self.panel_width*0.5, self.panel_height*0.5)
             cs5.lineTo(self.h5_circle_x,self.h5_circle_y)
-            painter.setPen(QPen(QColor(self.h1_hue[0]*255, self.h1_hue[1]*255, self.h1_hue[2]*255), 4, Qt.SolidLine, Qt.SquareCap, Qt.MiterJoin))
+            painter.setPen(QPen(QColorFromFloat(self.h1_hue[0]*255, self.h1_hue[1]*255, self.h1_hue[2]*255), 4, Qt.SolidLine, Qt.SquareCap, Qt.MiterJoin))
             painter.drawPath(cs1)
-            painter.setPen(QPen(QColor(self.h5_hue[0]*255, self.h5_hue[1]*255, self.h5_hue[2]*255), 4, Qt.SolidLine, Qt.SquareCap, Qt.MiterJoin))
+            painter.setPen(QPen(QColorFromFloat(self.h5_hue[0]*255, self.h5_hue[1]*255, self.h5_hue[2]*255), 4, Qt.SolidLine, Qt.SquareCap, Qt.MiterJoin))
             painter.drawPath(cs5)
-            painter.setPen(QPen(QColor(self.h2_hue[0]*255, self.h2_hue[1]*255, self.h2_hue[2]*255), 4, Qt.SolidLine, Qt.SquareCap, Qt.MiterJoin))
+            painter.setPen(QPen(QColorFromFloat(self.h2_hue[0]*255, self.h2_hue[1]*255, self.h2_hue[2]*255), 4, Qt.SolidLine, Qt.SquareCap, Qt.MiterJoin))
             painter.drawPath(cs2)
-            painter.setPen(QPen(QColor(self.h4_hue[0]*255, self.h4_hue[1]*255, self.h4_hue[2]*255), 4, Qt.SolidLine, Qt.SquareCap, Qt.MiterJoin))
+            painter.setPen(QPen(QColorFromFloat(self.h4_hue[0]*255, self.h4_hue[1]*255, self.h4_hue[2]*255), 4, Qt.SolidLine, Qt.SquareCap, Qt.MiterJoin))
             painter.drawPath(cs4)
-            painter.setPen(QPen(QColor(self.h3_hue[0]*255, self.h3_hue[1]*255, self.h3_hue[2]*255), 4, Qt.SolidLine, Qt.SquareCap, Qt.MiterJoin))
+            painter.setPen(QPen(QColorFromFloat(self.h3_hue[0]*255, self.h3_hue[1]*255, self.h3_hue[2]*255), 4, Qt.SolidLine, Qt.SquareCap, Qt.MiterJoin))
             painter.drawPath(cs3)
 
     # Trignometry
@@ -3578,7 +3584,7 @@ class Panel_GAM_Polygon(QWidget):
         self.cursor_rmb.load(self.array_rmb)
         # Style SVG Cursors
         self.cursor_size = 20
-        self.cursor_half = self.cursor_size / 2
+        self.cursor_half = self.cursor_size // 2
         self.cursor_lmb.setGeometry(QtCore.QRect(-self.cursor_half, -self.cursor_half, self.cursor_size, self.cursor_size))
         self.cursor_rmb.setGeometry(QtCore.QRect(-self.cursor_half, -self.cursor_half, self.cursor_size, self.cursor_size))
         self.cursor_rmb.resize(0, 0)
@@ -3723,8 +3729,8 @@ class Panel_GAM_Polygon(QWidget):
             self.value_x = 0
             self.value_y = 0
         # Move Cursor
-        self.cursor_lmb.move(self.value_x-(self.cursor_lmb.width() / 2), self.value_y-(self.cursor_lmb.height() / 2))
-        self.cursor_rmb.move(self.value_x-(self.cursor_rmb.width() / 2), self.value_y-(self.cursor_rmb.height() / 2))
+        self.cursor_lmb.move(math.floor(self.value_x-(self.cursor_lmb.width() / 2)), math.floor(self.value_y-(self.cursor_lmb.height() / 2)))
+        self.cursor_rmb.move(math.floor(self.value_x-(self.cursor_rmb.width() / 2)), math.floor(self.value_y-(self.cursor_rmb.height() / 2)))
         # Change Color
         self.array_rmb = self.style.SVG_Cursor_RMB(self.hex)
         self.cursor_rmb.load(self.array_rmb)
@@ -3796,8 +3802,8 @@ class Panel_GAM_Polygon(QWidget):
         # Correct Cursor
         if (event.buttons() == QtCore.Qt.LeftButton or event.buttons() == QtCore.Qt.MiddleButton):
             # Move Cursor
-            self.cursor_lmb.move(self.value_x-(self.cursor_lmb.width() * 0.5), self.value_y-(self.cursor_lmb.height() * 0.5))
-            self.cursor_rmb.move(self.value_x-(self.cursor_rmb.width() * 0.5), self.value_y-(self.cursor_rmb.height() * 0.5))
+            self.cursor_lmb.move(math.floor(self.value_x-(self.cursor_lmb.width() * 0.5)), math.floor(self.value_y-(self.cursor_lmb.height() * 0.5)))
+            self.cursor_rmb.move(math.floor(self.value_x-(self.cursor_rmb.width() * 0.5)), math.floor(self.value_y-(self.cursor_rmb.height() * 0.5)))
             # Change Color
             self.array_rmb = self.style.SVG_Cursor_RMB(self.hex)
             self.cursor_rmb.load(self.array_rmb)
@@ -3826,8 +3832,8 @@ class Panel_GAM_Polygon(QWidget):
             # Scale Cursor for Display
             self.cursor_rmb.resize(self.scale_factor, self.scale_factor) # 60 = max tilt value
             # Move Cursor
-            self.cursor_lmb.move(self.value_x-(self.cursor_lmb.width() / 2), self.value_y-(self.cursor_lmb.height() / 2))
-            self.cursor_rmb.move(self.value_x-(self.cursor_rmb.width() / 2), self.value_y-(self.cursor_rmb.height() / 2))
+            self.cursor_lmb.move(math.floor(self.value_x-(self.cursor_lmb.width() / 2)), math.floor(self.value_y-(self.cursor_lmb.height() / 2)))
+            self.cursor_rmb.move(math.floor(self.value_x-(self.cursor_rmb.width() / 2)), math.floor(self.value_y-(self.cursor_rmb.height() / 2)))
             # Change Color
             self.array_rmb = self.style.SVG_Cursor_RMB(self.hex)
             self.cursor_rmb.load(self.array_rmb)
@@ -4111,8 +4117,8 @@ class Panel_GAM_Polygon(QWidget):
         self.value_x = (self.panel_width*0.5) - ((self.panel_width*self.radius) * math.cos(math.radians(self.angle)))
         self.value_y = (self.panel_height*0.5) - ((self.panel_height*self.radius) * math.sin(math.radians(self.angle)))
         # Move Cursor
-        self.cursor_lmb.move(self.value_x-(self.cursor_lmb.width() * 0.5), self.value_y-(self.cursor_lmb.height() * 0.5))
-        self.cursor_rmb.move(self.value_x-(self.cursor_rmb.width() * 0.5), self.value_y-(self.cursor_rmb.height() * 0.5))
+        self.cursor_lmb.move(math.floor(self.value_x-(self.cursor_lmb.width() * 0.5)), math.floor(self.value_y-(self.cursor_lmb.height() * 0.5)))
+        self.cursor_rmb.move(math.floor(self.value_x-(self.cursor_rmb.width() * 0.5)), math.floor(self.value_y-(self.cursor_rmb.height() * 0.5)))
         # Change Color
         self.array_rmb = self.style.SVG_Cursor_RMB(self.hex)
         self.cursor_rmb.load(self.array_rmb)
@@ -4162,83 +4168,83 @@ class Panel_GAM_Polygon(QWidget):
         # Hue Gradient Colors
         painter.setPen(QtCore.Qt.NoPen)
         if self.wheel == "CMY":
-            hue = QConicalGradient(QPoint(self.panel_width/2, self.panel_height/2), 180)
-            hue.setColorAt(0.000, QColor(self.c36[0], self.c36[1], self.c36[2])) # RED
-            hue.setColorAt(0.027, QColor(self.c35[0], self.c35[1], self.c35[2]))
-            hue.setColorAt(0.055, QColor(self.c34[0], self.c34[1], self.c34[2]))
-            hue.setColorAt(0.083, QColor(self.c33[0], self.c33[1], self.c33[2]))
-            hue.setColorAt(0.111, QColor(self.c32[0], self.c32[1], self.c32[2]))
-            hue.setColorAt(0.138, QColor(self.c31[0], self.c31[1], self.c31[2]))
-            hue.setColorAt(0.166, QColor(self.c30[0], self.c30[1], self.c30[2])) # Magenta
-            hue.setColorAt(0.194, QColor(self.c29[0], self.c29[1], self.c29[2]))
-            hue.setColorAt(0.222, QColor(self.c28[0], self.c28[1], self.c28[2]))
-            hue.setColorAt(0.250, QColor(self.c27[0], self.c27[1], self.c27[2]))
-            hue.setColorAt(0.277, QColor(self.c26[0], self.c26[1], self.c26[2]))
-            hue.setColorAt(0.305, QColor(self.c25[0], self.c25[1], self.c25[2]))
-            hue.setColorAt(0.333, QColor(self.c24[0], self.c24[1], self.c24[2])) # Blue
-            hue.setColorAt(0.361, QColor(self.c23[0], self.c23[1], self.c23[2]))
-            hue.setColorAt(0.388, QColor(self.c22[0], self.c22[1], self.c22[2]))
-            hue.setColorAt(0.416, QColor(self.c21[0], self.c21[1], self.c21[2]))
-            hue.setColorAt(0.444, QColor(self.c20[0], self.c20[1], self.c20[2]))
-            hue.setColorAt(0.472, QColor(self.c19[0], self.c19[1], self.c19[2]))
-            hue.setColorAt(0.500, QColor(self.c18[0], self.c18[1], self.c18[2])) # Cyan
-            hue.setColorAt(0.527, QColor(self.c17[0], self.c17[1], self.c17[2]))
-            hue.setColorAt(0.555, QColor(self.c16[0], self.c16[1], self.c16[2]))
-            hue.setColorAt(0.583, QColor(self.c15[0], self.c15[1], self.c15[2]))
-            hue.setColorAt(0.611, QColor(self.c14[0], self.c14[1], self.c14[2]))
-            hue.setColorAt(0.638, QColor(self.c13[0], self.c13[1], self.c13[2]))
-            hue.setColorAt(0.666, QColor(self.c12[0], self.c12[1], self.c12[2])) # Green
-            hue.setColorAt(0.694, QColor(self.c11[0], self.c11[1], self.c11[2]))
-            hue.setColorAt(0.722, QColor(self.c10[0], self.c10[1], self.c10[2]))
-            hue.setColorAt(0.750, QColor(self.c09[0], self.c09[1], self.c09[2]))
-            hue.setColorAt(0.777, QColor(self.c08[0], self.c08[1], self.c08[2]))
-            hue.setColorAt(0.805, QColor(self.c07[0], self.c07[1], self.c07[2]))
-            hue.setColorAt(0.833, QColor(self.c06[0], self.c06[1], self.c06[2])) # Yellow
-            hue.setColorAt(0.861, QColor(self.c05[0], self.c05[1], self.c05[2]))
-            hue.setColorAt(0.888, QColor(self.c04[0], self.c04[1], self.c04[2]))
-            hue.setColorAt(0.916, QColor(self.c03[0], self.c03[1], self.c03[2]))
-            hue.setColorAt(0.944, QColor(self.c02[0], self.c02[1], self.c02[2]))
-            hue.setColorAt(0.972, QColor(self.c01[0], self.c01[1], self.c01[2]))
-            hue.setColorAt(1.000, QColor(self.c00[0], self.c00[1], self.c00[2])) # Red
+            hue = QConicalGradient(QPointFromFloat(self.panel_width/2, self.panel_height/2), 180)
+            hue.setColorAt(0.000, QColorFromFloat(self.c36[0], self.c36[1], self.c36[2])) # RED
+            hue.setColorAt(0.027, QColorFromFloat(self.c35[0], self.c35[1], self.c35[2]))
+            hue.setColorAt(0.055, QColorFromFloat(self.c34[0], self.c34[1], self.c34[2]))
+            hue.setColorAt(0.083, QColorFromFloat(self.c33[0], self.c33[1], self.c33[2]))
+            hue.setColorAt(0.111, QColorFromFloat(self.c32[0], self.c32[1], self.c32[2]))
+            hue.setColorAt(0.138, QColorFromFloat(self.c31[0], self.c31[1], self.c31[2]))
+            hue.setColorAt(0.166, QColorFromFloat(self.c30[0], self.c30[1], self.c30[2])) # Magenta
+            hue.setColorAt(0.194, QColorFromFloat(self.c29[0], self.c29[1], self.c29[2]))
+            hue.setColorAt(0.222, QColorFromFloat(self.c28[0], self.c28[1], self.c28[2]))
+            hue.setColorAt(0.250, QColorFromFloat(self.c27[0], self.c27[1], self.c27[2]))
+            hue.setColorAt(0.277, QColorFromFloat(self.c26[0], self.c26[1], self.c26[2]))
+            hue.setColorAt(0.305, QColorFromFloat(self.c25[0], self.c25[1], self.c25[2]))
+            hue.setColorAt(0.333, QColorFromFloat(self.c24[0], self.c24[1], self.c24[2])) # Blue
+            hue.setColorAt(0.361, QColorFromFloat(self.c23[0], self.c23[1], self.c23[2]))
+            hue.setColorAt(0.388, QColorFromFloat(self.c22[0], self.c22[1], self.c22[2]))
+            hue.setColorAt(0.416, QColorFromFloat(self.c21[0], self.c21[1], self.c21[2]))
+            hue.setColorAt(0.444, QColorFromFloat(self.c20[0], self.c20[1], self.c20[2]))
+            hue.setColorAt(0.472, QColorFromFloat(self.c19[0], self.c19[1], self.c19[2]))
+            hue.setColorAt(0.500, QColorFromFloat(self.c18[0], self.c18[1], self.c18[2])) # Cyan
+            hue.setColorAt(0.527, QColorFromFloat(self.c17[0], self.c17[1], self.c17[2]))
+            hue.setColorAt(0.555, QColorFromFloat(self.c16[0], self.c16[1], self.c16[2]))
+            hue.setColorAt(0.583, QColorFromFloat(self.c15[0], self.c15[1], self.c15[2]))
+            hue.setColorAt(0.611, QColorFromFloat(self.c14[0], self.c14[1], self.c14[2]))
+            hue.setColorAt(0.638, QColorFromFloat(self.c13[0], self.c13[1], self.c13[2]))
+            hue.setColorAt(0.666, QColorFromFloat(self.c12[0], self.c12[1], self.c12[2])) # Green
+            hue.setColorAt(0.694, QColorFromFloat(self.c11[0], self.c11[1], self.c11[2]))
+            hue.setColorAt(0.722, QColorFromFloat(self.c10[0], self.c10[1], self.c10[2]))
+            hue.setColorAt(0.750, QColorFromFloat(self.c09[0], self.c09[1], self.c09[2]))
+            hue.setColorAt(0.777, QColorFromFloat(self.c08[0], self.c08[1], self.c08[2]))
+            hue.setColorAt(0.805, QColorFromFloat(self.c07[0], self.c07[1], self.c07[2]))
+            hue.setColorAt(0.833, QColorFromFloat(self.c06[0], self.c06[1], self.c06[2])) # Yellow
+            hue.setColorAt(0.861, QColorFromFloat(self.c05[0], self.c05[1], self.c05[2]))
+            hue.setColorAt(0.888, QColorFromFloat(self.c04[0], self.c04[1], self.c04[2]))
+            hue.setColorAt(0.916, QColorFromFloat(self.c03[0], self.c03[1], self.c03[2]))
+            hue.setColorAt(0.944, QColorFromFloat(self.c02[0], self.c02[1], self.c02[2]))
+            hue.setColorAt(0.972, QColorFromFloat(self.c01[0], self.c01[1], self.c01[2]))
+            hue.setColorAt(1.000, QColorFromFloat(self.c00[0], self.c00[1], self.c00[2])) # Red
         if self.wheel == "RYB":
-            hue = QConicalGradient(QPoint(self.panel_width/2, self.panel_height/2), 210)
-            hue.setColorAt(0.000, QColor(self.c36[0], self.c36[1], self.c36[2])) # RED
-            hue.setColorAt(0.027, QColor(self.c35[0], self.c35[1], self.c35[2]))
-            hue.setColorAt(0.055, QColor(self.c34[0], self.c34[1], self.c34[2]))
-            hue.setColorAt(0.083, QColor(self.c33[0], self.c33[1], self.c33[2]))
-            hue.setColorAt(0.111, QColor(self.c32[0], self.c32[1], self.c32[2]))
-            hue.setColorAt(0.138, QColor(self.c31[0], self.c31[1], self.c31[2]))
-            hue.setColorAt(0.166, QColor(self.c30[0], self.c30[1], self.c30[2])) # Magenta
-            hue.setColorAt(0.194, QColor(self.c29[0], self.c29[1], self.c29[2]))
-            hue.setColorAt(0.222, QColor(self.c28[0], self.c28[1], self.c28[2]))
-            hue.setColorAt(0.250, QColor(self.c27[0], self.c27[1], self.c27[2]))
-            hue.setColorAt(0.277, QColor(self.c26[0], self.c26[1], self.c26[2]))
-            hue.setColorAt(0.305, QColor(self.c25[0], self.c25[1], self.c25[2]))
-            hue.setColorAt(0.333, QColor(self.c24[0], self.c24[1], self.c24[2])) # Blue
-            hue.setColorAt(0.361, QColor(self.c23[0], self.c23[1], self.c23[2]))
-            hue.setColorAt(0.388, QColor(self.c22[0], self.c22[1], self.c22[2]))
-            hue.setColorAt(0.416, QColor(self.c21[0], self.c21[1], self.c21[2]))
-            hue.setColorAt(0.444, QColor(self.c20[0], self.c20[1], self.c20[2]))
-            hue.setColorAt(0.472, QColor(self.c19[0], self.c19[1], self.c19[2]))
-            hue.setColorAt(0.500, QColor(self.c18[0], self.c18[1], self.c18[2])) # Cyan
-            hue.setColorAt(0.527, QColor(self.c17[0], self.c17[1], self.c17[2]))
-            hue.setColorAt(0.555, QColor(self.c16[0], self.c16[1], self.c16[2]))
-            hue.setColorAt(0.583, QColor(self.c15[0], self.c15[1], self.c15[2]))
-            hue.setColorAt(0.611, QColor(self.c14[0], self.c14[1], self.c14[2]))
-            hue.setColorAt(0.638, QColor(self.c13[0], self.c13[1], self.c13[2]))
-            hue.setColorAt(0.666, QColor(self.c12[0], self.c12[1], self.c12[2])) # Green
-            hue.setColorAt(0.694, QColor(self.c11[0], self.c11[1], self.c11[2]))
-            hue.setColorAt(0.722, QColor(self.c10[0], self.c10[1], self.c10[2]))
-            hue.setColorAt(0.750, QColor(self.c09[0], self.c09[1], self.c09[2]))
-            hue.setColorAt(0.777, QColor(self.c08[0], self.c08[1], self.c08[2]))
-            hue.setColorAt(0.805, QColor(self.c07[0], self.c07[1], self.c07[2]))
-            hue.setColorAt(0.833, QColor(self.c06[0], self.c06[1], self.c06[2])) # Yellow
-            hue.setColorAt(0.861, QColor(self.c05[0], self.c05[1], self.c05[2]))
-            hue.setColorAt(0.888, QColor(self.c04[0], self.c04[1], self.c04[2]))
-            hue.setColorAt(0.916, QColor(self.c03[0], self.c03[1], self.c03[2]))
-            hue.setColorAt(0.944, QColor(self.c02[0], self.c02[1], self.c02[2]))
-            hue.setColorAt(0.972, QColor(self.c01[0], self.c01[1], self.c01[2]))
-            hue.setColorAt(1.000, QColor(self.c00[0], self.c00[1], self.c00[2])) # Red
+            hue = QConicalGradient(QPointFromFloat(self.panel_width/2, self.panel_height/2), 210)
+            hue.setColorAt(0.000, QColorFromFloat(self.c36[0], self.c36[1], self.c36[2])) # RED
+            hue.setColorAt(0.027, QColorFromFloat(self.c35[0], self.c35[1], self.c35[2]))
+            hue.setColorAt(0.055, QColorFromFloat(self.c34[0], self.c34[1], self.c34[2]))
+            hue.setColorAt(0.083, QColorFromFloat(self.c33[0], self.c33[1], self.c33[2]))
+            hue.setColorAt(0.111, QColorFromFloat(self.c32[0], self.c32[1], self.c32[2]))
+            hue.setColorAt(0.138, QColorFromFloat(self.c31[0], self.c31[1], self.c31[2]))
+            hue.setColorAt(0.166, QColorFromFloat(self.c30[0], self.c30[1], self.c30[2])) # Magenta
+            hue.setColorAt(0.194, QColorFromFloat(self.c29[0], self.c29[1], self.c29[2]))
+            hue.setColorAt(0.222, QColorFromFloat(self.c28[0], self.c28[1], self.c28[2]))
+            hue.setColorAt(0.250, QColorFromFloat(self.c27[0], self.c27[1], self.c27[2]))
+            hue.setColorAt(0.277, QColorFromFloat(self.c26[0], self.c26[1], self.c26[2]))
+            hue.setColorAt(0.305, QColorFromFloat(self.c25[0], self.c25[1], self.c25[2]))
+            hue.setColorAt(0.333, QColorFromFloat(self.c24[0], self.c24[1], self.c24[2])) # Blue
+            hue.setColorAt(0.361, QColorFromFloat(self.c23[0], self.c23[1], self.c23[2]))
+            hue.setColorAt(0.388, QColorFromFloat(self.c22[0], self.c22[1], self.c22[2]))
+            hue.setColorAt(0.416, QColorFromFloat(self.c21[0], self.c21[1], self.c21[2]))
+            hue.setColorAt(0.444, QColorFromFloat(self.c20[0], self.c20[1], self.c20[2]))
+            hue.setColorAt(0.472, QColorFromFloat(self.c19[0], self.c19[1], self.c19[2]))
+            hue.setColorAt(0.500, QColorFromFloat(self.c18[0], self.c18[1], self.c18[2])) # Cyan
+            hue.setColorAt(0.527, QColorFromFloat(self.c17[0], self.c17[1], self.c17[2]))
+            hue.setColorAt(0.555, QColorFromFloat(self.c16[0], self.c16[1], self.c16[2]))
+            hue.setColorAt(0.583, QColorFromFloat(self.c15[0], self.c15[1], self.c15[2]))
+            hue.setColorAt(0.611, QColorFromFloat(self.c14[0], self.c14[1], self.c14[2]))
+            hue.setColorAt(0.638, QColorFromFloat(self.c13[0], self.c13[1], self.c13[2]))
+            hue.setColorAt(0.666, QColorFromFloat(self.c12[0], self.c12[1], self.c12[2])) # Green
+            hue.setColorAt(0.694, QColorFromFloat(self.c11[0], self.c11[1], self.c11[2]))
+            hue.setColorAt(0.722, QColorFromFloat(self.c10[0], self.c10[1], self.c10[2]))
+            hue.setColorAt(0.750, QColorFromFloat(self.c09[0], self.c09[1], self.c09[2]))
+            hue.setColorAt(0.777, QColorFromFloat(self.c08[0], self.c08[1], self.c08[2]))
+            hue.setColorAt(0.805, QColorFromFloat(self.c07[0], self.c07[1], self.c07[2]))
+            hue.setColorAt(0.833, QColorFromFloat(self.c06[0], self.c06[1], self.c06[2])) # Yellow
+            hue.setColorAt(0.861, QColorFromFloat(self.c05[0], self.c05[1], self.c05[2]))
+            hue.setColorAt(0.888, QColorFromFloat(self.c04[0], self.c04[1], self.c04[2]))
+            hue.setColorAt(0.916, QColorFromFloat(self.c03[0], self.c03[1], self.c03[2]))
+            hue.setColorAt(0.944, QColorFromFloat(self.c02[0], self.c02[1], self.c02[2]))
+            hue.setColorAt(0.972, QColorFromFloat(self.c01[0], self.c01[1], self.c01[2]))
+            hue.setColorAt(1.000, QColorFromFloat(self.c00[0], self.c00[1], self.c00[2])) # Red
         painter.setBrush(QBrush(hue))
         # HUE Gradient Paint Colors
         if self.gamut_shape == "None":
@@ -4389,35 +4395,35 @@ class Panel_GAM_Polygon(QWidget):
             b = 1 - 0.551915024494
             path.moveTo(AO1[0], AO1[1])
             path.cubicTo(
-                QPoint( self.Math_1D_Lerp(AO1[0],P12[0],a), self.Math_1D_Lerp(AO1[1],P12[1],a) ),
-                QPoint( self.Math_1D_Lerp(P12[0],AO2[0],b), self.Math_1D_Lerp(P12[1],AO2[1],b) ),
-                QPoint(AO2[0],AO2[1]))
+                QPointFromFloat( self.Math_1D_Lerp(AO1[0],P12[0],a), self.Math_1D_Lerp(AO1[1],P12[1],a) ),
+                QPointFromFloat( self.Math_1D_Lerp(P12[0],AO2[0],b), self.Math_1D_Lerp(P12[1],AO2[1],b) ),
+                QPointFromFloat(AO2[0],AO2[1]))
             path.cubicTo(
-                QPoint( self.Math_1D_Lerp(AO2[0],P23[0],a), self.Math_1D_Lerp(AO2[1],P23[1],a) ),
-                QPoint( self.Math_1D_Lerp(P23[0],AO3[0],b), self.Math_1D_Lerp(P23[1],AO3[1],b) ),
-                QPoint(AO3[0],AO3[1]))
+                QPointFromFloat( self.Math_1D_Lerp(AO2[0],P23[0],a), self.Math_1D_Lerp(AO2[1],P23[1],a) ),
+                QPointFromFloat( self.Math_1D_Lerp(P23[0],AO3[0],b), self.Math_1D_Lerp(P23[1],AO3[1],b) ),
+                QPointFromFloat(AO3[0],AO3[1]))
             path.cubicTo(
-                QPoint( self.Math_1D_Lerp(AO3[0],P34[0],a), self.Math_1D_Lerp(AO3[1],P34[1],a) ),
-                QPoint( self.Math_1D_Lerp(P34[0],AO4[0],b), self.Math_1D_Lerp(P34[1],AO4[1],b) ),
-                QPoint(AO4[0],AO4[1]))
+                QPointFromFloat( self.Math_1D_Lerp(AO3[0],P34[0],a), self.Math_1D_Lerp(AO3[1],P34[1],a) ),
+                QPointFromFloat( self.Math_1D_Lerp(P34[0],AO4[0],b), self.Math_1D_Lerp(P34[1],AO4[1],b) ),
+                QPointFromFloat(AO4[0],AO4[1]))
             path.cubicTo(
-                QPoint( self.Math_1D_Lerp(AO4[0],P41[0],a), self.Math_1D_Lerp(AO4[1],P41[1],a) ),
-                QPoint( self.Math_1D_Lerp(P41[0],AO1[0],b), self.Math_1D_Lerp(P41[1],AO1[1],b) ),
-                QPoint(AO1[0],AO1[1]))
+                QPointFromFloat( self.Math_1D_Lerp(AO4[0],P41[0],a), self.Math_1D_Lerp(AO4[1],P41[1],a) ),
+                QPointFromFloat( self.Math_1D_Lerp(P41[0],AO1[0],b), self.Math_1D_Lerp(P41[1],AO1[1],b) ),
+                QPointFromFloat(AO1[0],AO1[1]))
             painter.drawPath(path)
         if self.gamut_shape == "P1_S3":
             poly = QPolygon([
-                QPoint(self.P1_S3[0],self.P1_S3[1]),
-                QPoint(self.P1_S3[2],self.P1_S3[3]),
-                QPoint(self.P1_S3[4],self.P1_S3[5])
+                QPointFromFloat(self.P1_S3[0],self.P1_S3[1]),
+                QPointFromFloat(self.P1_S3[2],self.P1_S3[3]),
+                QPointFromFloat(self.P1_S3[4],self.P1_S3[5])
                 ])
             painter.drawPolygon(poly)
         if self.gamut_shape == "P1_S4":
             poly = QPolygon([
-                QPoint(self.P1_S4[0],self.P1_S4[1]),
-                QPoint(self.P1_S4[2],self.P1_S4[3]),
-                QPoint(self.P1_S4[4],self.P1_S4[5]),
-                QPoint(self.P1_S4[6],self.P1_S4[7])
+                QPointFromFloat(self.P1_S4[0],self.P1_S4[1]),
+                QPointFromFloat(self.P1_S4[2],self.P1_S4[3]),
+                QPointFromFloat(self.P1_S4[4],self.P1_S4[5]),
+                QPointFromFloat(self.P1_S4[6],self.P1_S4[7])
                 ])
             painter.drawPolygon(poly)
         if self.gamut_shape == "P2_S1":
@@ -4699,42 +4705,42 @@ class Panel_GAM_Polygon(QWidget):
             b = 1 - 0.551915024494
             path_p1.moveTo(AO1[0], AO1[1])
             path_p1.cubicTo(
-                QPoint( self.Math_1D_Lerp(AO1[0],P12[0],a), self.Math_1D_Lerp(AO1[1],P12[1],a) ),
-                QPoint( self.Math_1D_Lerp(P12[0],AO2[0],b), self.Math_1D_Lerp(P12[1],AO2[1],b) ),
-                QPoint(AO2[0],AO2[1]))
+                QPointFromFloat( self.Math_1D_Lerp(AO1[0],P12[0],a), self.Math_1D_Lerp(AO1[1],P12[1],a) ),
+                QPointFromFloat( self.Math_1D_Lerp(P12[0],AO2[0],b), self.Math_1D_Lerp(P12[1],AO2[1],b) ),
+                QPointFromFloat(AO2[0],AO2[1]))
             path_p1.cubicTo(
-                QPoint( self.Math_1D_Lerp(AO2[0],P23[0],a), self.Math_1D_Lerp(AO2[1],P23[1],a) ),
-                QPoint( self.Math_1D_Lerp(P23[0],AO3[0],b), self.Math_1D_Lerp(P23[1],AO3[1],b) ),
-                QPoint(AO3[0],AO3[1]))
+                QPointFromFloat( self.Math_1D_Lerp(AO2[0],P23[0],a), self.Math_1D_Lerp(AO2[1],P23[1],a) ),
+                QPointFromFloat( self.Math_1D_Lerp(P23[0],AO3[0],b), self.Math_1D_Lerp(P23[1],AO3[1],b) ),
+                QPointFromFloat(AO3[0],AO3[1]))
             path_p1.cubicTo(
-                QPoint( self.Math_1D_Lerp(AO3[0],P34[0],a), self.Math_1D_Lerp(AO3[1],P34[1],a) ),
-                QPoint( self.Math_1D_Lerp(P34[0],AO4[0],b), self.Math_1D_Lerp(P34[1],AO4[1],b) ),
-                QPoint(AO4[0],AO4[1]))
+                QPointFromFloat( self.Math_1D_Lerp(AO3[0],P34[0],a), self.Math_1D_Lerp(AO3[1],P34[1],a) ),
+                QPointFromFloat( self.Math_1D_Lerp(P34[0],AO4[0],b), self.Math_1D_Lerp(P34[1],AO4[1],b) ),
+                QPointFromFloat(AO4[0],AO4[1]))
             path_p1.cubicTo(
-                QPoint( self.Math_1D_Lerp(AO4[0],P41[0],a), self.Math_1D_Lerp(AO4[1],P41[1],a) ),
-                QPoint( self.Math_1D_Lerp(P41[0],AO1[0],b), self.Math_1D_Lerp(P41[1],AO1[1],b) ),
-                QPoint(AO1[0],AO1[1]))
+                QPointFromFloat( self.Math_1D_Lerp(AO4[0],P41[0],a), self.Math_1D_Lerp(AO4[1],P41[1],a) ),
+                QPointFromFloat( self.Math_1D_Lerp(P41[0],AO1[0],b), self.Math_1D_Lerp(P41[1],AO1[1],b) ),
+                QPointFromFloat(AO1[0],AO1[1]))
             # Painter Path Object for Polygon 2
             path_p2 = QPainterPath()
             a = 0.551915024494
             b = 1 - 0.551915024494
             path_p2.moveTo(AO5[0], AO5[1])
             path_p2.cubicTo(
-                QPoint( self.Math_1D_Lerp(AO5[0],P56[0],a), self.Math_1D_Lerp(AO5[1],P56[1],a) ),
-                QPoint( self.Math_1D_Lerp(P56[0],AO6[0],b), self.Math_1D_Lerp(P56[1],AO6[1],b) ),
-                QPoint(AO6[0],AO6[1]))
+                QPointFromFloat( self.Math_1D_Lerp(AO5[0],P56[0],a), self.Math_1D_Lerp(AO5[1],P56[1],a) ),
+                QPointFromFloat( self.Math_1D_Lerp(P56[0],AO6[0],b), self.Math_1D_Lerp(P56[1],AO6[1],b) ),
+                QPointFromFloat(AO6[0],AO6[1]))
             path_p2.cubicTo(
-                QPoint( self.Math_1D_Lerp(AO6[0],P67[0],a), self.Math_1D_Lerp(AO6[1],P67[1],a) ),
-                QPoint( self.Math_1D_Lerp(P67[0],AO7[0],b), self.Math_1D_Lerp(P67[1],AO7[1],b) ),
-                QPoint(AO7[0],AO7[1]))
+                QPointFromFloat( self.Math_1D_Lerp(AO6[0],P67[0],a), self.Math_1D_Lerp(AO6[1],P67[1],a) ),
+                QPointFromFloat( self.Math_1D_Lerp(P67[0],AO7[0],b), self.Math_1D_Lerp(P67[1],AO7[1],b) ),
+                QPointFromFloat(AO7[0],AO7[1]))
             path_p2.cubicTo(
-                QPoint( self.Math_1D_Lerp(AO7[0],P78[0],a), self.Math_1D_Lerp(AO7[1],P78[1],a) ),
-                QPoint( self.Math_1D_Lerp(P78[0],AO8[0],b), self.Math_1D_Lerp(P78[1],AO8[1],b) ),
-                QPoint(AO8[0],AO8[1]))
+                QPointFromFloat( self.Math_1D_Lerp(AO7[0],P78[0],a), self.Math_1D_Lerp(AO7[1],P78[1],a) ),
+                QPointFromFloat( self.Math_1D_Lerp(P78[0],AO8[0],b), self.Math_1D_Lerp(P78[1],AO8[1],b) ),
+                QPointFromFloat(AO8[0],AO8[1]))
             path_p2.cubicTo(
-                QPoint( self.Math_1D_Lerp(AO8[0],P85[0],a), self.Math_1D_Lerp(AO8[1],P85[1],a) ),
-                QPoint( self.Math_1D_Lerp(P85[0],AO5[0],b), self.Math_1D_Lerp(P85[1],AO5[1],b) ),
-                QPoint(AO5[0],AO5[1]))
+                QPointFromFloat( self.Math_1D_Lerp(AO8[0],P85[0],a), self.Math_1D_Lerp(AO8[1],P85[1],a) ),
+                QPointFromFloat( self.Math_1D_Lerp(P85[0],AO5[0],b), self.Math_1D_Lerp(P85[1],AO5[1],b) ),
+                QPointFromFloat(AO5[0],AO5[1]))
             # Draw Paths
             painter.drawPath(path_p1)
             painter.drawPath(path_p2)
@@ -4778,7 +4784,7 @@ class Panel_GAM_Polygon(QWidget):
         # Inner Gray And Mask Primeries Colors
         painter.setPen(QtCore.Qt.NoPen)
         gray = QRadialGradient(QPointF(self.panel_width/2, self.panel_height/2), self.panel_width/2)
-        gray.setColorAt(0.000, QColor(self.cgg[0], self.cgg[1], self.cgg[2], 255))
+        gray.setColorAt(0.000, QColorFromFloat(self.cgg[0], self.cgg[1], self.cgg[2], 255))
 
         # gray.setColorAt(0.100, QColor(self.cgg[0], self.cgg[1], self.cgg[2], 253))
         # gray.setColorAt(0.200, QColor(self.cgg[0], self.cgg[1], self.cgg[2], 247))
@@ -4790,7 +4796,7 @@ class Panel_GAM_Polygon(QWidget):
         # gray.setColorAt(0.800, QColor(self.cgg[0], self.cgg[1], self.cgg[2], 98))
         # gray.setColorAt(0.900, QColor(self.cgg[0], self.cgg[1], self.cgg[2], 52))
 
-        gray.setColorAt(1.000, QColor(self.cgg[0], self.cgg[1], self.cgg[2], 0))
+        gray.setColorAt(1.000, QColorFromFloat(self.cgg[0], self.cgg[1], self.cgg[2], 0))
         painter.setBrush(QBrush(gray))
 
         # Render new
@@ -4944,7 +4950,7 @@ class Panel_DOT(QWidget):
         self.cursor_lmb = QtSvg.QSvgWidget(self)
         self.array_lmb = self.style.SVG_Cursor_LMB()
         self.cursor_lmb.load(self.array_lmb)
-        self.cursor_half = self.cursor_size / 2
+        self.cursor_half = self.cursor_size // 2
         self.cursor_lmb.setGeometry(QtCore.QRect(-self.cursor_half, -self.cursor_half, self.cursor_size, self.cursor_size))
         self.cursor_lmb.resize(0, 0)
         self.unseen = self.style.Transparent()
@@ -4974,7 +4980,7 @@ class Panel_DOT(QWidget):
         self.panel_width = width
         self.panel_height = height
         # Move Cursor
-        self.cursor_lmb.move(self.value_x-(self.cursor_size / 2), self.value_y-(self.cursor_size / 2))
+        self.cursor_lmb.move(math.floor(self.value_x-(self.cursor_size / 2)), math.floor(self.value_y-(self.cursor_size / 2)))
     def Update_Panel(self, colors, panel_width, panel_height):
         self.colors = colors
         self.panel_width = panel_width
@@ -5003,7 +5009,7 @@ class Panel_DOT(QWidget):
         self.value_x = event.x()
         self.value_y = event.y()
         # Mouse Position
-        self.cursor_lmb.move(self.value_x-(self.cursor_size / 2), self.value_y-(self.cursor_size / 2))
+        self.cursor_lmb.move(math.floor(self.value_x-(self.cursor_size / 2)), math.floor(self.value_y-(self.cursor_size / 2)))
         self.cursor_lmb.resize(self.scale, self.scale)
         # Emit values
         self.SIGNAL_DOT_COLOR.emit([self.value_x, self.value_y])
@@ -5027,7 +5033,7 @@ class Panel_DOT(QWidget):
         painter.translate(t_x, t_y)
         for i in range(0, n_x):
             for j in range(0, n_y):
-                painter.setBrush(QBrush(QColor(self.colors[i][j][0]*255, self.colors[i][j][1]*255, self.colors[i][j][2]*255)))
+                painter.setBrush(QBrush(QColorFromFloat(self.colors[i][j][0]*255, self.colors[i][j][1]*255, self.colors[i][j][2]*255)))
                 point_x = self.size * i + self.margin * (i+1)
                 point_y = self.size * j + self.margin * (j+1)
                 painter.drawRect(point_x,point_y, self.size,self.size) # Draw Squares
@@ -5062,7 +5068,7 @@ class Panel_OBJ(QWidget):
         self.cursor_lmb = QtSvg.QSvgWidget(self)
         self.array_lmb = self.style.SVG_Cursor_LMB()
         self.cursor_lmb.load(self.array_lmb)
-        self.cursor_half = self.cursor_size / 2
+        self.cursor_half = self.cursor_size // 2
         self.cursor_lmb.setGeometry(QtCore.QRect(-self.cursor_half, -self.cursor_half, self.cursor_size, self.cursor_size))
         self.cursor_lmb.resize(0, 0)
         self.unseen = self.style.Transparent()
@@ -5081,7 +5087,7 @@ class Panel_OBJ(QWidget):
         self.panel_width = width
         self.panel_height = height
         # Move Cursor
-        self.cursor_lmb.move(self.value_x-(self.cursor_size / 2), self.value_y-(self.cursor_size / 2))
+        self.cursor_lmb.move(math.floor(self.value_x-(self.cursor_size / 2)), math.floor(self.value_y-(self.cursor_size / 2)))
     def Set_Path(self, path_bg_1, path_bg_2, path_bg_3, path_dif_1, path_dif_2, path_dif_3, path_dif_4, path_dif_5, path_dif_6, path_fg_1, path_fg_2, path_fg_3):
         self.paths = [
             path_bg_1,
@@ -5135,7 +5141,7 @@ class Panel_OBJ(QWidget):
         self.value_x = event.x()
         self.value_y = event.y()
         # Mouse Position
-        self.cursor_lmb.move(self.value_x-(self.cursor_size / 2), self.value_y-(self.cursor_size / 2))
+        self.cursor_lmb.move(math.floor(self.value_x-(self.cursor_size / 2)), math.floor(self.value_y-(self.cursor_size / 2)))
         self.cursor_lmb.resize(self.scale, self.scale)
         # Emit values
         self.SIGNAL_OBJ_COLOR.emit([self.value_x, self.value_y])
@@ -5148,7 +5154,7 @@ class Panel_OBJ(QWidget):
         for i in range(0, len(self.paths)):
             pixmap_1 = QPixmap.fromImage(QImage(self.paths[i]))
             image = QImage(pixmap_1.width(), pixmap_1.height(), QImage.Format_ARGB32_Premultiplied)
-            image.fill(QColor(self.colors[i][1]*255, self.colors[i][2]*255, self.colors[i][3]*255, self.colors[i][4]*255))
+            image.fill(QColorFromFloat(self.colors[i][1]*255, self.colors[i][2]*255, self.colors[i][3]*255, self.colors[i][4]*255))
             pixmap_2 = QPixmap.fromImage(image)
             painter = QPainter()
             painter.begin(pixmap_1)
@@ -5213,7 +5219,7 @@ class Panel_IMG(QWidget):
         self.cursor_lmb = QtSvg.QSvgWidget(self)
         self.array_lmb = self.style.SVG_Cursor_LMB()
         self.cursor_lmb.load(self.array_lmb)
-        self.cursor_half = self.cursor_size / 2
+        self.cursor_half = self.cursor_size // 2
         self.cursor_lmb.setGeometry(QtCore.QRect(-self.cursor_half, -self.cursor_half, self.cursor_size, self.cursor_size))
         self.cursor_lmb.resize(0, 0)
         self.unseen = self.style.Transparent()
@@ -5329,7 +5335,7 @@ class Panel_IMG(QWidget):
             self.Context_Reset()
 
         # Mouse Position
-        self.cursor_lmb.move(self.value_x-(self.cursor_size / 2), self.value_y-(self.cursor_size / 2))
+        self.cursor_lmb.move(math.floor(self.value_x-(self.cursor_size / 2)), math.floor(self.value_y-(self.cursor_size / 2)))
         self.cursor_lmb.resize(self.scale, self.scale)
         self.update()
 
@@ -5888,35 +5894,35 @@ class Channel_Linear(QWidget):
             painter.setPen(QtCore.Qt.NoPen)
             grad = QLinearGradient(0, 0, self.width, 0)
             if (self.blocks == "4" or self.blocks == "6"):
-                grad.setColorAt(0.000, QColor(self.s00[0], self.s00[1], self.s00[2], 255)) # Color Left
-                grad.setColorAt(0.050, QColor(self.s05[0], self.s05[1], self.s05[2], 255))
-                grad.setColorAt(0.100, QColor(self.s10[0], self.s10[1], self.s10[2], 255))
-                grad.setColorAt(0.150, QColor(self.s15[0], self.s15[1], self.s15[2], 255))
-                grad.setColorAt(0.200, QColor(self.s20[0], self.s20[1], self.s20[2], 255))
-                grad.setColorAt(0.250, QColor(self.s25[0], self.s25[1], self.s25[2], 255))
-                grad.setColorAt(0.300, QColor(self.s30[0], self.s30[1], self.s30[2], 255))
-                grad.setColorAt(0.350, QColor(self.s35[0], self.s35[1], self.s35[2], 255))
-                grad.setColorAt(0.400, QColor(self.s40[0], self.s40[1], self.s40[2], 255))
-                grad.setColorAt(0.450, QColor(self.s45[0], self.s45[1], self.s45[2], 255))
-                grad.setColorAt(0.500, QColor(self.s50[0], self.s50[1], self.s50[2], 255))
-                grad.setColorAt(0.550, QColor(self.s55[0], self.s55[1], self.s55[2], 255))
-                grad.setColorAt(0.600, QColor(self.s60[0], self.s60[1], self.s60[2], 255))
-                grad.setColorAt(0.650, QColor(self.s65[0], self.s65[1], self.s65[2], 255))
-                grad.setColorAt(0.700, QColor(self.s70[0], self.s70[1], self.s70[2], 255))
-                grad.setColorAt(0.750, QColor(self.s75[0], self.s75[1], self.s75[2], 255))
-                grad.setColorAt(0.800, QColor(self.s80[0], self.s80[1], self.s80[2], 255))
-                grad.setColorAt(0.850, QColor(self.s85[0], self.s85[1], self.s85[2], 255))
-                grad.setColorAt(0.900, QColor(self.s90[0], self.s90[1], self.s90[2], 255))
-                grad.setColorAt(0.950, QColor(self.s95[0], self.s95[1], self.s95[2], 255))
-                grad.setColorAt(1.000, QColor(self.sAA[0], self.sAA[1], self.sAA[2], 255)) # Color Right
+                grad.setColorAt(0.000, QColorFromFloat(self.s00[0], self.s00[1], self.s00[2], 255)) # Color Left
+                grad.setColorAt(0.050, QColorFromFloat(self.s05[0], self.s05[1], self.s05[2], 255))
+                grad.setColorAt(0.100, QColorFromFloat(self.s10[0], self.s10[1], self.s10[2], 255))
+                grad.setColorAt(0.150, QColorFromFloat(self.s15[0], self.s15[1], self.s15[2], 255))
+                grad.setColorAt(0.200, QColorFromFloat(self.s20[0], self.s20[1], self.s20[2], 255))
+                grad.setColorAt(0.250, QColorFromFloat(self.s25[0], self.s25[1], self.s25[2], 255))
+                grad.setColorAt(0.300, QColorFromFloat(self.s30[0], self.s30[1], self.s30[2], 255))
+                grad.setColorAt(0.350, QColorFromFloat(self.s35[0], self.s35[1], self.s35[2], 255))
+                grad.setColorAt(0.400, QColorFromFloat(self.s40[0], self.s40[1], self.s40[2], 255))
+                grad.setColorAt(0.450, QColorFromFloat(self.s45[0], self.s45[1], self.s45[2], 255))
+                grad.setColorAt(0.500, QColorFromFloat(self.s50[0], self.s50[1], self.s50[2], 255))
+                grad.setColorAt(0.550, QColorFromFloat(self.s55[0], self.s55[1], self.s55[2], 255))
+                grad.setColorAt(0.600, QColorFromFloat(self.s60[0], self.s60[1], self.s60[2], 255))
+                grad.setColorAt(0.650, QColorFromFloat(self.s65[0], self.s65[1], self.s65[2], 255))
+                grad.setColorAt(0.700, QColorFromFloat(self.s70[0], self.s70[1], self.s70[2], 255))
+                grad.setColorAt(0.750, QColorFromFloat(self.s75[0], self.s75[1], self.s75[2], 255))
+                grad.setColorAt(0.800, QColorFromFloat(self.s80[0], self.s80[1], self.s80[2], 255))
+                grad.setColorAt(0.850, QColorFromFloat(self.s85[0], self.s85[1], self.s85[2], 255))
+                grad.setColorAt(0.900, QColorFromFloat(self.s90[0], self.s90[1], self.s90[2], 255))
+                grad.setColorAt(0.950, QColorFromFloat(self.s95[0], self.s95[1], self.s95[2], 255))
+                grad.setColorAt(1.000, QColorFromFloat(self.sAA[0], self.sAA[1], self.sAA[2], 255)) # Color Right
             if self.blocks == "HUE":
-                grad.setColorAt(0.000, QColor(self.red[0], self.red[1], self.red[2], 255)) # Color Left
-                grad.setColorAt(0.166, QColor(self.yellow[0], self.yellow[1], self.yellow[2], 255))
-                grad.setColorAt(0.333, QColor(self.green[0], self.green[1], self.green[2], 255))
-                grad.setColorAt(0.500, QColor(self.cyan[0], self.cyan[1], self.cyan[2], 255))
-                grad.setColorAt(0.666, QColor(self.blue[0], self.blue[1], self.blue[2], 255))
-                grad.setColorAt(0.833, QColor(self.magenta[0], self.magenta[1], self.magenta[2], 255))
-                grad.setColorAt(1.000, QColor(self.red2[0], self.red2[1], self.red2[2], 255)) # Color Right
+                grad.setColorAt(0.000, QColorFromFloat(self.red[0], self.red[1], self.red[2], 255)) # Color Left
+                grad.setColorAt(0.166, QColorFromFloat(self.yellow[0], self.yellow[1], self.yellow[2], 255))
+                grad.setColorAt(0.333, QColorFromFloat(self.green[0], self.green[1], self.green[2], 255))
+                grad.setColorAt(0.500, QColorFromFloat(self.cyan[0], self.cyan[1], self.cyan[2], 255))
+                grad.setColorAt(0.666, QColorFromFloat(self.blue[0], self.blue[1], self.blue[2], 255))
+                grad.setColorAt(0.833, QColorFromFloat(self.magenta[0], self.magenta[1], self.magenta[2], 255))
+                grad.setColorAt(1.000, QColorFromFloat(self.red2[0], self.red2[1], self.red2[2], 255)) # Color Right
             painter.setBrush(QBrush(grad))
             painter.drawRect(1,1, self.width-2, channel_height-2)
 
@@ -5931,10 +5937,10 @@ class Channel_Linear(QWidget):
             top = 0
             bot = channel_height
             polygon = QPolygon([
-                QPoint(self.value_x, top),
-                QPoint(0, top),
-                QPoint(0, bot),
-                QPoint(self.value_x, bot)
+                QPointFromFloat(self.value_x, top),
+                QPointFromFloat(0, top),
+                QPointFromFloat(0, bot),
+                QPointFromFloat(self.value_x, bot)
                 ])
             # Brush and Pen
             painter.setPen(QPen(self.color_dark, 2, Qt.SolidLine, Qt.SquareCap, Qt.MiterJoin))
@@ -5949,10 +5955,10 @@ class Channel_Linear(QWidget):
             bot = channel_middle + diamond_dist
             mid = channel_middle
             polygon = QPolygon([
-                QPoint(self.value_x, top),
-                QPoint(left, mid),
-                QPoint(self.value_x, bot),
-                QPoint(right, mid)
+                QPointFromFloat(self.value_x, top),
+                QPointFromFloat(left, mid),
+                QPointFromFloat(self.value_x, bot),
+                QPointFromFloat(right, mid)
                 ])
             # Brush and Pen
             painter.setPen(QPen(self.color_dark, 2, Qt.SolidLine, Qt.SquareCap, Qt.MiterJoin))
@@ -5967,10 +5973,10 @@ class Channel_Linear(QWidget):
             bot = channel_middle + diamond_dist
             mid = channel_middle
             polygon = QPolygon([
-                QPoint(self.value_x, top),
-                QPoint(left, mid),
-                QPoint(self.value_x, bot),
-                QPoint(right, mid)
+                QPointFromFloat(self.value_x, top),
+                QPointFromFloat(left, mid),
+                QPointFromFloat(self.value_x, bot),
+                QPointFromFloat(right, mid)
                 ])
             # Brush and Pen
             painter.setPen(QPen(self.color_dark, 2, Qt.SolidLine, Qt.SquareCap, Qt.MiterJoin))
@@ -5984,10 +5990,10 @@ class Channel_Linear(QWidget):
             top = 0
             bot = channel_height
             polygon = QPolygon([
-                QPoint(left, top),
-                QPoint(left, bot),
-                QPoint(right, bot),
-                QPoint(right, top),
+                QPointFromFloat(left, top),
+                QPointFromFloat(left, bot),
+                QPointFromFloat(right, bot),
+                QPointFromFloat(right, top),
                 ])
             # Brush and Pen
             painter.setPen(QPen(self.color_dark, 2, Qt.SolidLine, Qt.SquareCap, Qt.MiterJoin))
@@ -6025,10 +6031,10 @@ class Channel_Interval(QWidget):
         # bot = channel_middle + diamond_dist
         # mid = channel_middle
         # polygon = QPolygon([
-        #     QPoint(self.value_x, top),
-        #     QPoint(left, mid),
-        #     QPoint(self.value_x, bot),
-        #     QPoint(right, mid)
+        #     QPointFromFloat(self.value_x, top),
+        #     QPointFromFloat(left, mid),
+        #     QPointFromFloat(self.value_x, bot),
+        #     QPointFromFloat(right, mid)
         #     ])
         # # Brush and Pen
         # painter.setPen(QPen(self.color_dark, 2, Qt.SolidLine, Qt.SquareCap, Qt.MiterJoin))
@@ -6216,27 +6222,27 @@ class Mixer_Linear(QWidget):
             # Gradient Display
             painter.setPen(QtCore.Qt.NoPen)
             grad = QLinearGradient(0, 0, self.width, 0)
-            grad.setColorAt(0.000, QColor(self.s00[0], self.s00[1], self.s00[2], 255)) # Color Left
-            grad.setColorAt(0.050, QColor(self.s05[0], self.s05[1], self.s05[2], 255))
-            grad.setColorAt(0.100, QColor(self.s10[0], self.s10[1], self.s10[2], 255))
-            grad.setColorAt(0.150, QColor(self.s15[0], self.s15[1], self.s15[2], 255))
-            grad.setColorAt(0.200, QColor(self.s20[0], self.s20[1], self.s20[2], 255))
-            grad.setColorAt(0.250, QColor(self.s25[0], self.s25[1], self.s25[2], 255))
-            grad.setColorAt(0.300, QColor(self.s30[0], self.s30[1], self.s30[2], 255))
-            grad.setColorAt(0.350, QColor(self.s35[0], self.s35[1], self.s35[2], 255))
-            grad.setColorAt(0.400, QColor(self.s40[0], self.s40[1], self.s40[2], 255))
-            grad.setColorAt(0.450, QColor(self.s45[0], self.s45[1], self.s45[2], 255))
-            grad.setColorAt(0.500, QColor(self.s50[0], self.s50[1], self.s50[2], 255))
-            grad.setColorAt(0.550, QColor(self.s55[0], self.s55[1], self.s55[2], 255))
-            grad.setColorAt(0.600, QColor(self.s60[0], self.s60[1], self.s60[2], 255))
-            grad.setColorAt(0.650, QColor(self.s65[0], self.s65[1], self.s65[2], 255))
-            grad.setColorAt(0.700, QColor(self.s70[0], self.s70[1], self.s70[2], 255))
-            grad.setColorAt(0.750, QColor(self.s75[0], self.s75[1], self.s75[2], 255))
-            grad.setColorAt(0.800, QColor(self.s80[0], self.s80[1], self.s80[2], 255))
-            grad.setColorAt(0.850, QColor(self.s85[0], self.s85[1], self.s85[2], 255))
-            grad.setColorAt(0.900, QColor(self.s90[0], self.s90[1], self.s90[2], 255))
-            grad.setColorAt(0.950, QColor(self.s95[0], self.s95[1], self.s95[2], 255))
-            grad.setColorAt(1.000, QColor(self.sAA[0], self.sAA[1], self.sAA[2], 255)) # Color Right
+            grad.setColorAt(0.000, QColorFromFloat(self.s00[0], self.s00[1], self.s00[2], 255)) # Color Left
+            grad.setColorAt(0.050, QColorFromFloat(self.s05[0], self.s05[1], self.s05[2], 255))
+            grad.setColorAt(0.100, QColorFromFloat(self.s10[0], self.s10[1], self.s10[2], 255))
+            grad.setColorAt(0.150, QColorFromFloat(self.s15[0], self.s15[1], self.s15[2], 255))
+            grad.setColorAt(0.200, QColorFromFloat(self.s20[0], self.s20[1], self.s20[2], 255))
+            grad.setColorAt(0.250, QColorFromFloat(self.s25[0], self.s25[1], self.s25[2], 255))
+            grad.setColorAt(0.300, QColorFromFloat(self.s30[0], self.s30[1], self.s30[2], 255))
+            grad.setColorAt(0.350, QColorFromFloat(self.s35[0], self.s35[1], self.s35[2], 255))
+            grad.setColorAt(0.400, QColorFromFloat(self.s40[0], self.s40[1], self.s40[2], 255))
+            grad.setColorAt(0.450, QColorFromFloat(self.s45[0], self.s45[1], self.s45[2], 255))
+            grad.setColorAt(0.500, QColorFromFloat(self.s50[0], self.s50[1], self.s50[2], 255))
+            grad.setColorAt(0.550, QColorFromFloat(self.s55[0], self.s55[1], self.s55[2], 255))
+            grad.setColorAt(0.600, QColorFromFloat(self.s60[0], self.s60[1], self.s60[2], 255))
+            grad.setColorAt(0.650, QColorFromFloat(self.s65[0], self.s65[1], self.s65[2], 255))
+            grad.setColorAt(0.700, QColorFromFloat(self.s70[0], self.s70[1], self.s70[2], 255))
+            grad.setColorAt(0.750, QColorFromFloat(self.s75[0], self.s75[1], self.s75[2], 255))
+            grad.setColorAt(0.800, QColorFromFloat(self.s80[0], self.s80[1], self.s80[2], 255))
+            grad.setColorAt(0.850, QColorFromFloat(self.s85[0], self.s85[1], self.s85[2], 255))
+            grad.setColorAt(0.900, QColorFromFloat(self.s90[0], self.s90[1], self.s90[2], 255))
+            grad.setColorAt(0.950, QColorFromFloat(self.s95[0], self.s95[1], self.s95[2], 255))
+            grad.setColorAt(1.000, QColorFromFloat(self.sAA[0], self.sAA[1], self.sAA[2], 255)) # Color Right
             painter.setBrush(QBrush(grad))
             painter.drawRect(1,1, self.width-2, 15-2)
 
@@ -6247,9 +6253,9 @@ class Mixer_Linear(QWidget):
         left = self.value_x - tri
         right = self.value_x + tri
         triangle = QPolygon([
-            QPoint(self.value_x, top),
-            QPoint(left, bot),
-            QPoint(right, bot)])
+            QPointFromFloat(self.value_x, top),
+            QPointFromFloat(left, bot),
+            QPointFromFloat(right, bot)])
         painter.setPen(QPen(self.color_dark, 2, Qt.SolidLine))
         painter.setBrush(QBrush(self.color_light))
         painter.drawPolygon(triangle)
